@@ -4,7 +4,131 @@
 
 本项目面向社区住户、物业管理人员与维修人员，围绕社区报修提供从故障登记到维修验收的完整服务流程，并作为后续数据库持久化、微服务拆分、认证授权、消息通信、事务处理、监控和部署的实践载体。
 
-**当前阶段：项目选题与需求设计。** 本文描述计划建设的功能与演进方向，不代表这些功能已经实现。
+**当前阶段：Spring Boot 最小可运行工程。** 已加入应用入口、基础 YAML 配置、Spring Web MVC、Actuator、问候和状态 GET 接口及启动测试；下文业务功能仍为后续规划。
+
+## 本周工程与运行说明
+
+- Java：25；Spring Boot：4.0.8；构建工具：Maven（使用仓库内 Maven Wrapper）。
+- Spring Initializr Group 与 Package name：`com.zjgsu.hly`。
+- 项目名称沿用“社区报修与上门维修服务平台”，应用名为 `community-repair`。
+- 默认端口：`8080`。唯一应用配置文件为 `monolith/src/main/resources/application.yml`。
+- 本周只实现应用启动、问候接口和健康状态验证，不包含业务实体、完整 REST API、Service、Repository 或数据库，也不需要配置数据库。
+
+### 目录结构
+
+```text
+microservices-practice-2412190707/
+├── README.md
+├── docs/
+└── monolith/                     # 独立 Maven 工程
+    ├── pom.xml
+    ├── mvnw
+    ├── mvnw.cmd
+    ├── .mvn/wrapper/maven-wrapper.properties
+    └── src/
+        ├── main/
+        │   ├── java/com/zjgsu/hly/
+        │   │   ├── CommunityRepairApplication.java
+        │   │   ├── StatusController.java
+        │   │   └── HelloController.java
+        │   └── resources/application.yml
+        └── test/java/com/zjgsu/hly/CommunityRepairApplicationTests.java
+```
+
+### 在 IntelliJ IDEA 中运行
+
+1. 选择 **File → Open**，打开 `monolith/pom.xml`，选择作为项目打开，并等待 Maven 同步完成。
+2. 在 **Project Structure → Project SDK** 中选择 JDK 25；Maven 的 Importer JDK 和 Runner JRE 也选择 JDK 25 或 Project SDK。
+3. Maven home path 选择 **Maven Wrapper**。首次运行需要联网下载 Maven 和依赖。
+4. 打开 `CommunityRepairApplication`，点击 `main` 方法旁的运行按钮。日志显示 Tomcat 在 8080 端口启动后访问状态接口。
+5. 打开 `CommunityRepairApplicationTests`，点击类旁运行按钮执行测试，或在 Maven 面板运行 Lifecycle → test。
+
+本机可使用 IDEA 自带的 Java 25：`C:\Program Files\JetBrains\IntelliJ IDEA 2026.2.3\jbr`。其他机器请配置自己的 JDK 25 路径。IDEA 的 SDK 配置与终端的 `JAVA_HOME` 是独立的，命令行执行前也需要确认 Java 版本为 25。
+
+### 使用 Maven Wrapper
+
+在 `monolith/` 目录内执行（Linux、macOS 或 Git Bash）：
+
+```bash
+./mvnw test
+./mvnw spring-boot:run
+```
+
+Windows PowerShell 使用：
+
+```powershell
+# 本机当前会话使用 Java 25；其他机器替换为自己的 JDK 25 路径
+$env:JAVA_HOME = 'C:\Program Files\JetBrains\IntelliJ IDEA 2026.2.3\jbr'
+$env:Path = "$env:JAVA_HOME\bin;$env:Path"
+cd D:\VMshare\microservices-practice-2412190707\monolith
+.\mvnw.cmd test
+.\mvnw.cmd spring-boot:run
+```
+
+终端启动的应用可按 `Ctrl+C` 停止；IDEA 启动的应用使用停止按钮。若 8080 被占用，先停止占用该端口的旧应用，再运行本项目。
+
+### 状态接口
+
+| 请求 | 地址 | 用途 |
+|---|---|---|
+| GET | `http://localhost:8080/api/status` | 验证应用可接受 HTTP 请求并返回 JSON |
+
+成功返回 HTTP `200`，JSON 字段顺序可能不同：
+
+```json
+{"application":"community-repair","status":"UP"}
+```
+
+可用浏览器访问，也可在 PowerShell 中执行：
+
+```powershell
+Invoke-RestMethod http://localhost:8080/api/status
+```
+
+该接口只表示当前应用能够响应请求，不代表未来数据库或其他服务的健康状态。
+
+### 问候接口与 Actuator 健康检查
+
+工程在 `pom.xml` 中引入 `spring-boot-starter-webmvc` 和 `spring-boot-starter-actuator`，启动类为 `com.zjgsu.hly.CommunityRepairApplication`。统一使用 `application.yml`，默认端口仍为 8080。
+
+| GET 地址 | 预期结果 |
+|---|---|
+| `http://localhost:8080/api/hello` | HTTP 200，返回项目名称与问候消息 |
+| `http://localhost:8080/actuator/health` | HTTP 200，JSON 中的 `status` 为 `UP`（可能同时包含健康分组信息） |
+
+`/api/hello` 示例响应（JSON 字段顺序不固定）：
+
+```json
+{"project":"社区报修与上门维修服务平台","message":"欢迎使用社区报修平台！"}
+```
+
+Actuator 健康接口由 Spring Boot 提供，无需自己编写健康检查控制器。配置仅通过 HTTP 暴露 `health`，不展示健康检查详细信息。本阶段没有数据库和其他外部业务服务，`UP` 表示当前已配置的健康检查通过。
+
+启动应用后可使用浏览器访问以上地址，或运行：
+
+```powershell
+Invoke-RestMethod http://localhost:8080/api/hello
+Invoke-RestMethod http://localhost:8080/actuator/health
+```
+
+已有 `/api/status` 保持可用；未添加业务 CRUD、Service、Repository 或数据库模型。测试增加问候响应和 Actuator 健康检查验证，目前共 4 项测试，已全部通过（0 失败、0 错误）。实际启动后 `/api/hello` 和 `/actuator/health` 均已验证返回 HTTP 200，健康状态为 `UP`。
+
+### 启动测试
+
+`CommunityRepairApplicationTests` 使用 `@SpringBootTest` 启动真实应用上下文及随机端口的 Web 服务，避免测试占用固定 8080 端口：
+
+- `contextLoads`：验证应用上下文和主配置类成功加载。
+- `statusEndpointReturnsApplicationAndUp`：发送真实 GET 请求，验证 HTTP 200、JSON 类型、应用名称及 `UP` 状态。
+
+### 初始版本验证记录（添加 Actuator 前，2026-09-28）
+
+- 使用 Java 25.0.4 和 Spring Boot 4.0.8。
+- Windows Wrapper 与 Git Bash 的 `./mvnw test` 均执行成功：2 项测试，0 失败，0 错误。
+- Git Bash 的 `./mvnw spring-boot:run` 成功启动，Tomcat 监听默认 8080 端口。
+- 实际请求 `GET http://localhost:8080/api/status` 返回 HTTP 200 和 `{"application":"community-repair","status":"UP"}`。
+- 命令行运行验证已通过；用户随后提供的 IDEA 测试日志显示 BUILD SUCCESS，并确认浏览器中的状态接口响应正常。其他机器首次在 IDEA 使用时仍需配置 JDK 25。
+
+后续课程的业务规划如下。
 
 ## 一、项目目标和适用场景
 
