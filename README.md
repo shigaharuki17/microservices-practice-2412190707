@@ -14,6 +14,19 @@
 - 默认端口：`8080`。唯一应用配置文件为 `monolith/src/main/resources/application.yml`。
 - 本周只实现应用启动、问候接口和健康状态验证，不包含业务实体、完整 REST API、Service、Repository 或数据库，也不需要配置数据库。
 
+### 环境要求
+
+| 项目 | 要求 |
+|---|---|
+| Java | JDK 25，需包含 `java` 和 `javac`；`JAVA_HOME` 指向 JDK 25 安装目录 |
+| Spring Boot | 4.0.8，由 `monolith/pom.xml` 固定版本 |
+| Maven | 使用工程自带 Maven Wrapper，当前固定 Maven 3.9.16；无需另行安装全局 Maven |
+| 网络 | 首次运行需下载 Wrapper 对应的 Maven 及项目依赖 |
+| 端口 | 默认使用 8080，启动前确保未被其他应用占用 |
+| 数据库 | 本周不需要安装或配置数据库 |
+
+在 `monolith/` 中执行 `./mvnw -v`（PowerShell 使用 `.\mvnw.cmd -v`），应确认 Maven 3.9.16 和 Java 25。IDEA 的项目 SDK、Maven 运行 JRE，以及命令行的 `JAVA_HOME` 都应使用 JDK 25。
+
 ### 目录结构
 
 ```text
@@ -47,9 +60,10 @@ microservices-practice-2412190707/
 
 ### 使用 Maven Wrapper
 
-在 `monolith/` 目录内执行（Linux、macOS 或 Git Bash）：
+从仓库根目录进入 `monolith/` 后执行（Linux、macOS 或 Git Bash）：
 
 ```bash
+cd monolith
 ./mvnw test
 ./mvnw spring-boot:run
 ```
@@ -119,14 +133,34 @@ Invoke-RestMethod http://localhost:8080/actuator/health
 
 - `contextLoads`：验证应用上下文和主配置类成功加载。
 - `statusEndpointReturnsApplicationAndUp`：发送真实 GET 请求，验证 HTTP 200、JSON 类型、应用名称及 `UP` 状态。
+- `helloEndpointReturnsProjectName`：验证问候接口返回项目名称和问候消息。
+- `actuatorHealthReturnsUp`：验证 Actuator 健康接口返回 HTTP 200，且 `status` 为 `UP`。
 
-### 初始版本验证记录（添加 Actuator 前，2026-09-28）
+### 当前验证结果（2026-09-28）
 
-- 使用 Java 25.0.4 和 Spring Boot 4.0.8。
-- Windows Wrapper 与 Git Bash 的 `./mvnw test` 均执行成功：2 项测试，0 失败，0 错误。
-- Git Bash 的 `./mvnw spring-boot:run` 成功启动，Tomcat 监听默认 8080 端口。
-- 实际请求 `GET http://localhost:8080/api/status` 返回 HTTP 200 和 `{"application":"community-repair","status":"UP"}`。
-- 命令行运行验证已通过；用户随后提供的 IDEA 测试日志显示 BUILD SUCCESS，并确认浏览器中的状态接口响应正常。其他机器首次在 IDEA 使用时仍需配置 JDK 25。
+在 `monolith/` 内使用 Git Bash 执行 `./mvnw test`，最终结果为：
+
+```text
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+```
+
+`contextLoads` 通过，确认 Spring 应用上下文能够加载。应用也已在默认 8080 端口成功启动，问候接口和健康检查均返回 HTTP 200，健康状态为 `UP`。测试使用随机端口，不要求正式应用提前启动。
+
+### 当前尚未实现的业务能力
+
+目前只完成工程启动、问候/状态接口、Actuator 健康检查和自动化测试。以下内容均为规划，尚未实现：
+
+- 用户注册登录、身份认证、角色权限和房屋信息管理。
+- 住户提交报修、物业审核派单、维修人员接单和上门预约。
+- 报价确认、维修记录、材料库存及领用、费用结算和支付。
+- 住户验收、评价、返修、投诉、业务通知和统计报表。
+- 业务模型实体、Service、Repository、数据库持久化和业务 CRUD。
+- 微服务拆分、消息队列、跨服务事务、完整监控及容器化部署。
+
+Actuator 健康检查已提供，但完整业务监控仍未实现。后文的角色、功能模块和业务流程均描述未来目标，不表示当前已经具备这些能力。
+
+作业与运行截图见 [第三周完成汇总](docs/homework/week-03/index.md)，优先场景及两个核心模型见 [项目初步规划](docs/project-proposal.md)。
 
 后续课程的业务规划如下。
 
