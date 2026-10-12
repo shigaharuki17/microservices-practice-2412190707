@@ -71,25 +71,34 @@ BUILD SUCCESS
 
 真实 MySQL 验证使用 8081，健康检查返回 UP。H2 测试结果不代替 MySQL 验证，本周两种环境均已实际运行。
 
-## 五、截图步骤（本人手动截取）
+## 五、运行截图
 
-本周截图尚待手动补充，请保存到 `screenshots/`，不要将含密码的环境变量设置窗口截图上传。
+以下图片为本人于 2026-10-12 实际运行时截取的原始截图，已归档到 `screenshots/`。
 
-1. **单体实现**：在终端运行 `scripts/demo.ps1`，截取四个状态及最终响应，保存 `01-workflow.png`；也可补充浏览器访问 `http://localhost:8081/api/repair-orders/1` 的截图。
-2. **规则验证**：请求已接单工单再次接单，截取 409 和错误说明，保存 `02-rule-conflict.png`。PowerShell 7 命令如下。
-3. **持久化**：在 MySQL 客户端或 Navicat 执行下方关联查询，显示结果；重启应用后浏览器仍能查询工单，截图保存 `03-mysql-persistence.png`。
-4. **测试**：IDEA 终端进入 monolith 执行测试，截取 17 项通过和 BUILD SUCCESS，保存 `04-tests.png`。可另截 Repository、Service 测试代码。
+| 截图 | 内容 | 作业小题 |
+|---|---|---|
+| [01-workflow.png](screenshots/01-workflow.png) | 5 号工单经历提交、审核、派单、接单四个状态，最终为 ACCEPTED | 单体应用实现 |
+| [02-order-detail.png](screenshots/02-order-detail.png) | 浏览器查询 4 号工单，返回 ACCEPTED 及关联维修人员编号 | 单体应用实现 |
+| [03-mysql-persistence.png](screenshots/03-mysql-persistence.png) | MySQL 两张业务表及关联查询，显示 1–5 号工单与维修人员 | 数据库持久化 |
+| [04-tests.png](screenshots/04-tests.png) | 17 项测试全部通过，0 失败、0 错误，BUILD SUCCESS | 测试与验证 |
 
-```powershell
-curl.exe --noproxy localhost -i -H "Content-Type: application/json" --data-binary @examples/assign.json http://localhost:8081/api/repair-orders/1/accept
-```
+流程截图与数据库截图均包含 5 号工单；浏览器截图是此前创建的 4 号工单。数据库截图证明实际落库与关联，重启验证另见 [重启后查询响应](mysql-after-restart.json)。
 
-```sql
-SELECT o.id, o.status, o.location, t.name, t.skill
-FROM repair_orders o LEFT JOIN technicians t ON o.technician_id=t.id;
-```
+### 完整业务流程
 
-工单与人员 id 应以实际响应为准；上方 id=1 对应本次已创建的演示数据。每个作业小题上传相关截图 1–5 张即可。
+![5 号工单完整受理流程](screenshots/01-workflow.png)
+
+### 工单查询接口
+
+![4 号工单查询结果](screenshots/02-order-detail.png)
+
+### MySQL 持久化
+
+![业务表及关联查询结果](screenshots/03-mysql-persistence.png)
+
+### 自动化测试
+
+![17 项测试通过](screenshots/04-tests.png)
 
 ## 六、作业系统填写文本
 
