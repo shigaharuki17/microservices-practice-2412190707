@@ -6,7 +6,8 @@ function Send-Json([string]$Path, $Body) {
     Invoke-RestMethod -NoProxy -Uri "$BaseUrl$Path" -Method Post -ContentType 'application/json; charset=utf-8' -Body ([Text.Encoding]::UTF8.GetBytes($json))
 }
 # Reuse the fixture technician; each execution creates a new demonstration order.
-$technician = @(Invoke-RestMethod -NoProxy "$BaseUrl/api/technicians") | Where-Object phone -eq '13800000001' | Select-Object -First 1
+$technicians = Invoke-RestMethod -NoProxy "$BaseUrl/api/technicians"
+$technician = $technicians | Where-Object phone -eq '13800000001' | Select-Object -First 1
 if (-not $technician) {
     $technician = Send-Json '/api/technicians' @{name='Demo plumber';phone='13800000001';skill='PLUMBING';available=$true}
 }
