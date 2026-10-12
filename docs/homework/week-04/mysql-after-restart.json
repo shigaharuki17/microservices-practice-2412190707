@@ -1,0 +1,13 @@
+{
+  "id": 1,
+  "residentName": "Demo resident",
+  "contactPhone": "13900000001",
+  "location": "Building 1 Room 101",
+  "description": "Leaking pipe",
+  "category": "PLUMBING",
+  "status": "ACCEPTED",
+  "reviewNote": "Approved for dispatch",
+  "technicianId": 1,
+  "createdAt": "2026-10-12T15:07:33.166142",
+  "updatedAt": "2026-10-12T15:07:33.285248"
+}

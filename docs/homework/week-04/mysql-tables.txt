@@ -1,0 +1,6 @@
+id	status	name	skill
+1	ACCEPTED	Demo plumber	PLUMBING
+Table	Create Table
+repair_orders	CREATE TABLE `repair_orders` (\n  `id` bigint NOT NULL AUTO_INCREMENT,\n  `category` enum('ELECTRICAL','LOCK','PLUMBING') NOT NULL,\n  `contact_phone` varchar(20) NOT NULL,\n  `created_at` datetime(6) NOT NULL,\n  `description` varchar(1000) NOT NULL,\n  `location` varchar(200) NOT NULL,\n  `resident_name` varchar(50) NOT NULL,\n  `review_note` varchar(300) DEFAULT NULL,\n  `status` enum('ACCEPTED','APPROVED','ASSIGNED','REJECTED','SUBMITTED') NOT NULL,\n  `updated_at` datetime(6) NOT NULL,\n  `version` bigint DEFAULT NULL,\n  `technician_id` bigint DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  KEY `idx_order_status` (`status`),\n  KEY `fk_order_technician` (`technician_id`),\n  CONSTRAINT `fk_order_technician` FOREIGN KEY (`technician_id`) REFERENCES `technicians` (`id`)\n) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+Table	Create Table
+technicians	CREATE TABLE `technicians` (\n  `id` bigint NOT NULL AUTO_INCREMENT,\n  `available` bit(1) NOT NULL,\n  `name` varchar(50) NOT NULL,\n  `phone` varchar(20) NOT NULL,\n  `skill` enum('ELECTRICAL','LOCK','PLUMBING') NOT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uk_technician_phone` (`phone`)\n) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci

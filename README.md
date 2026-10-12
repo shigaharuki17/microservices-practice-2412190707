@@ -1,168 +1,156 @@
 # 社区报修与上门维修服务平台
 
-> 微服务开发与实践课程项目｜霍利屹｜2412190707
+> 微服务开发与实践｜霍利屹｜2412190707｜第四周：单体应用与数据库持久化
 
-本项目面向社区住户、物业管理人员与维修人员，围绕社区报修提供从故障登记到维修验收的完整服务流程，并作为后续数据库持久化、微服务拆分、认证授权、消息通信、事务处理、监控和部署的实践载体。
+本项目解决社区报修信息分散、派单不及时和进度难追踪的问题。当前在原 `monolith/` 中实现“住户提交报修 → 物业审核 → 按技能派单 → 维修人员确认接单”的完整受理流程，并使用 MySQL 持久化。Java 基础包保持 `com.zjgsu.hly`，新增分层代码放入其子包。
 
-**当前阶段：Spring Boot 最小可运行工程。** 已加入应用入口、基础 YAML 配置、Spring Web MVC、Actuator、问候和状态 GET 接口及启动测试；下文业务功能仍为后续规划。
-
-## 本周工程与运行说明
-
-- Java：25；Spring Boot：4.0.8；构建工具：Maven（使用仓库内 Maven Wrapper）。
-- Spring Initializr Group 与 Package name：`com.zjgsu.hly`。
-- 项目名称沿用“社区报修与上门维修服务平台”，应用名为 `community-repair`。
-- 默认端口：`8080`。唯一应用配置文件为 `monolith/src/main/resources/application.yml`。
-- 本周只实现应用启动、问候接口和健康状态验证，不包含业务实体、完整 REST API、Service、Repository 或数据库，也不需要配置数据库。
-
-### 环境要求
+## 环境要求
 
 | 项目 | 要求 |
 |---|---|
-| Java | JDK 25，需包含 `java` 和 `javac`；`JAVA_HOME` 指向 JDK 25 安装目录 |
-| Spring Boot | 4.0.8，由 `monolith/pom.xml` 固定版本 |
-| Maven | 使用工程自带 Maven Wrapper，当前固定 Maven 3.9.16；无需另行安装全局 Maven |
-| 网络 | 首次运行需下载 Wrapper 对应的 Maven 及项目依赖 |
-| 端口 | 默认使用 8080，启动前确保未被其他应用占用 |
-| 数据库 | 本周不需要安装或配置数据库 |
+| Java | JDK 25，`JAVA_HOME` 指向 JDK 25；IDEA Project SDK 和 Maven Runner 也选择 JDK 25 |
+| Spring Boot | 4.0.8 |
+| Maven | 自带 Wrapper 固定 Maven 3.9.16，无需全局 Maven；首次下载依赖需要联网 |
+| 正式运行数据库 | 本地 MySQL 8.0+；本机验证版本为 MySQL 9.5.0 |
+| 测试数据库 | H2 内存库，仅 test scope；执行测试不需要 MySQL 或密码 |
+| 配置/端口 | `monolith/src/main/resources/application.yml`；默认 8080，可用 `SERVER_PORT` 覆盖 |
 
-在 `monolith/` 中执行 `./mvnw -v`（PowerShell 使用 `.\mvnw.cmd -v`），应确认 Maven 3.9.16 和 Java 25。IDEA 的项目 SDK、Maven 运行 JRE，以及命令行的 `JAVA_HOME` 都应使用 JDK 25。
-
-### 目录结构
+## 工程结构
 
 ```text
-microservices-practice-2412190707/
-├── README.md
-├── docs/
-└── monolith/                     # 独立 Maven 工程
-    ├── pom.xml
-    ├── mvnw
-    ├── mvnw.cmd
-    ├── .mvn/wrapper/maven-wrapper.properties
-    └── src/
-        ├── main/
-        │   ├── java/com/zjgsu/hly/
-        │   │   ├── CommunityRepairApplication.java
-        │   │   ├── StatusController.java
-        │   │   └── HelloController.java
-        │   └── resources/application.yml
-        └── test/java/com/zjgsu/hly/CommunityRepairApplicationTests.java
+README.md
+docs/
+  project-proposal.md
+  database.md
+  homework/week-04/index.md
+monolith/
+  pom.xml / mvnw / mvnw.cmd / .mvn/
+  examples/                         # 可直接提交的请求 JSON
+  scripts/                          # 建库 SQL、流程演示脚本
+  src/main/java/com/zjgsu/hly/
+    CommunityRepairApplication.java
+    model/                          # Technician、RepairOrder、枚举
+    dto/                            # 请求校验与响应 DTO
+    controller/                     # HTTP 输入输出
+    service/                        # 状态、技能、可接单检查及事务
+    repository/                     # Spring Data JPA 数据访问
+    exception/                      # 统一 400/404/409 错误响应
+  src/main/resources/application.yml
+  src/test/java/com/zjgsu/hly/        # 上下文、Repository、Service、API 测试
+  src/test/resources/application-test.yml
 ```
 
-### 在 IntelliJ IDEA 中运行
+## 本地 MySQL 安装、建库与连接
 
-1. 选择 **File → Open**，打开 `monolith/pom.xml`，选择作为项目打开，并等待 Maven 同步完成。
-2. 在 **Project Structure → Project SDK** 中选择 JDK 25；Maven 的 Importer JDK 和 Runner JRE 也选择 JDK 25 或 Project SDK。
-3. Maven home path 选择 **Maven Wrapper**。首次运行需要联网下载 Maven 和依赖。
-4. 打开 `CommunityRepairApplication`，点击 `main` 方法旁的运行按钮。日志显示 Tomcat 在 8080 端口启动后访问状态接口。
-5. 打开 `CommunityRepairApplicationTests`，点击类旁运行按钮执行测试，或在 Maven 面板运行 Lifecycle → test。
+1. 从 [MySQL 官方下载页](https://dev.mysql.com/downloads/mysql/) 安装本地 MySQL Community Server，完成初始化并启动服务，记住管理员密码。Windows 可在服务管理器中确认 MySQL 服务正在运行；无需 Docker Compose。
+2. 执行 `mysql -u root -p`，交互输入密码。打开 `monolith/scripts/create-database.sql`，将其中的密码占位符替换成自己的应用密码后，在 MySQL 客户端执行该脚本。它创建独立的 `community_repair` 库和仅有该库必要权限的 `community_app` 账号，不删除已有数据。
+3. 配置 `DB_URL`、`DB_USERNAME`、`DB_PASSWORD` 环境变量。不要把真实密码提交到 GitHub。`CREATE USER IF NOT EXISTS` 不会修改已有账号的密码。
+4. 首次启动通过 JPA 的 `ddl-auto: update` 创建表，后续重启保留数据。此配置适用于课程开发；正式部署应使用迁移脚本和 schema 校验。
 
-本机可使用 IDEA 自带的 Java 25：`C:\Program Files\JetBrains\IntelliJ IDEA 2026.2.3\jbr`。其他机器请配置自己的 JDK 25 路径。IDEA 的 SDK 配置与终端的 `JAVA_HOME` 是独立的，命令行执行前也需要确认 Java 版本为 25。
+本机已创建课程数据库和专用应用账号，连接配置保存在 **`monolith/.env.local.ps1`**，已由 `.gitignore` 排除。其他机器没有这个文件，应按上述步骤自行配置。
 
-### 使用 Maven Wrapper
+### Windows PowerShell（本机）
 
-从仓库根目录进入 `monolith/` 后执行（Linux、macOS 或 Git Bash）：
-
-```bash
-cd monolith
-./mvnw test
-./mvnw spring-boot:run
-```
-
-Windows PowerShell 使用：
+在仓库根目录执行：
 
 ```powershell
-# 本机当前会话使用 Java 25；其他机器替换为自己的 JDK 25 路径
+cd monolith
 $env:JAVA_HOME = 'C:\Program Files\JetBrains\IntelliJ IDEA 2026.2.3\jbr'
 $env:Path = "$env:JAVA_HOME\bin;$env:Path"
-cd D:\VMshare\microservices-practice-2412190707\monolith
-.\mvnw.cmd test
+. .\.env.local.ps1
 .\mvnw.cmd spring-boot:run
 ```
 
-终端启动的应用可按 `Ctrl+C` 停止；IDEA 启动的应用使用停止按钮。若 8080 被占用，先停止占用该端口的旧应用，再运行本项目。
+其他机器替换 JDK 路径，并改为设置自己的连接信息：
 
-### 状态接口
+```powershell
+$env:DB_URL = 'jdbc:mysql://localhost:3306/community_repair?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8'
+$env:DB_USERNAME = 'community_app'
+# 使用自己设置的数据库密码；不要截图或提交含密码的设置命令
+$env:DB_PASSWORD = '<本机应用账号密码>'
+.\mvnw.cmd spring-boot:run
+```
 
-| 请求 | 地址 | 用途 |
+### Linux、macOS 或 Git Bash
+
+```bash
+cd monolith
+export DB_URL='jdbc:mysql://localhost:3306/community_repair?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8'
+export DB_USERNAME='community_app'
+read -r -s -p 'Database password: ' DB_PASSWORD
+export DB_PASSWORD
+./mvnw spring-boot:run
+```
+
+IDEA 打开 `monolith/pom.xml`，等待 Maven 同步，配置 JDK 25 和 Wrapper。在运行配置的 Environment variables 中设置相同的数据库变量，再运行启动类或 `spring-boot:run`。IDEA 环境变量与另一个终端的变量不会自动共享。
+
+默认访问端口是 8080。若被其他应用占用，可在 PowerShell 设置 `$env:SERVER_PORT='8081'`，并将下方请求地址中的端口改为 8081。本次真实 MySQL 验证使用了 8081，项目默认值未改。使用 Ctrl+C 或 IDEA 停止按钮结束应用。
+
+## 业务接口与规则
+
+| 方法 | 路径 | 请求/成功结果 |
 |---|---|---|
-| GET | `http://localhost:8080/api/status` | 验证应用可接受 HTTP 请求并返回 JSON |
+| POST | `/api/technicians` | 创建人员，201；name、phone、skill、available |
+| GET | `/api/technicians` | 查询人员列表，200 |
+| POST | `/api/repair-orders` | 创建工单，201，Location 指向详情；residentName、contactPhone、location、description、category |
+| GET | `/api/repair-orders` | 查询工单列表，200 |
+| GET | `/api/repair-orders/{id}` | 查询工单详情，200 |
+| POST | `/api/repair-orders/{id}/review` | `{ "approved": true, "note": "通过" }`，200 |
+| POST | `/api/repair-orders/{id}/assign` | `{ "technicianId": 1 }`，200 |
+| POST | `/api/repair-orders/{id}/accept` | `{ "technicianId": 1 }`，200 |
 
-成功返回 HTTP `200`，JSON 字段顺序可能不同：
+类别/技能可选 `PLUMBING`（水管）、`ELECTRICAL`（电路）、`LOCK`（门锁）。状态顺序为 SUBMITTED → APPROVED → ASSIGNED → ACCEPTED，审核不通过则进入 REJECTED。
 
-```json
-{"application":"community-repair","status":"UP"}
+Service 保证：只有已审核工单可派单；维修人员必须可接单且技能匹配；只能由被分配人员确认，不能重复接单。违反规则返回 409；资源不存在返回 404；参数校验失败返回 400。错误响应格式为 `{"status":409,"message":"具体原因"}`。更新使用事务和乐观锁，Controller 不直接操作 Repository。
+
+### 可直接运行的 curl 示例
+
+以下命令在 `monolith/` 目录执行。Linux/macOS/Git Bash 使用 `curl`；Windows PowerShell 使用 `curl.exe` 替换 `curl`，避免同名别名。`--noproxy` 防止系统代理干扰 localhost。请求数据使用仓库中的 UTF-8 文件，避免不同终端的 JSON 引号问题。
+
+```bash
+curl --noproxy localhost -i -H "Content-Type: application/json" --data-binary @examples/technician.json http://localhost:8080/api/technicians
+curl --noproxy localhost -i -H "Content-Type: application/json" --data-binary @examples/order.json http://localhost:8080/api/repair-orders
+curl --noproxy localhost -i http://localhost:8080/api/repair-orders
 ```
 
-可用浏览器访问，也可在 PowerShell 中执行：
+第一条使用固定演示电话，重复执行可能返回 409（唯一约束生效）；工单创建每次生成新 id。审核和派单需使用创建响应中的真实编号，不要假设永远为 1。完整的可重复演示（PowerShell 7）会自动使用真实编号：
 
 ```powershell
-Invoke-RestMethod http://localhost:8080/api/status
+.\scripts\demo.ps1
+# 如果使用临时端口：
+.\scripts\demo.ps1 -BaseUrl http://localhost:8081
 ```
 
-该接口只表示当前应用能够响应请求，不代表未来数据库或其他服务的健康状态。
+### 基础接口与健康检查
 
-### 问候接口与 Actuator 健康检查
+- [问候接口](http://localhost:8080/api/hello)：返回项目名称与问候消息。
+- [Actuator 健康检查](http://localhost:8080/actuator/health)：返回 `status: UP`；本周已接入数据库，数据库连接也参与健康检查。
+- [原状态接口](http://localhost:8080/api/status)：保留应用名称与 UP 响应；它是简单响应，不代替 Actuator 检查。
 
-工程在 `pom.xml` 中引入 `spring-boot-starter-webmvc` 和 `spring-boot-starter-actuator`，启动类为 `com.zjgsu.hly.CommunityRepairApplication`。统一使用 `application.yml`，默认端口仍为 8080。
+## 自动化测试与验证结果
 
-| GET 地址 | 预期结果 |
-|---|---|
-| `http://localhost:8080/api/hello` | HTTP 200，返回项目名称与问候消息 |
-| `http://localhost:8080/actuator/health` | HTTP 200，JSON 中的 `status` 为 `UP`（可能同时包含健康分组信息） |
+进入 `monolith/` 执行，不需启动 MySQL 或设置连接密码：
 
-`/api/hello` 示例响应（JSON 字段顺序不固定）：
-
-```json
-{"project":"社区报修与上门维修服务平台","message":"欢迎使用社区报修平台！"}
+```bash
+./mvnw test
 ```
 
-Actuator 健康接口由 Spring Boot 提供，无需自己编写健康检查控制器。配置仅通过 HTTP 暴露 `health`，不展示健康检查详细信息。本阶段没有数据库和其他外部业务服务，`UP` 表示当前已配置的健康检查通过。
+Windows PowerShell 使用 `.\mvnw.cmd test`。测试显式激活 `test` profile，以 H2 内存库自动建表并准备测试数据；不会清空本地 MySQL。
 
-启动应用后可使用浏览器访问以上地址，或运行：
+2026-10-12 已连续两次通过：**17 项测试，0 失败、0 错误，BUILD SUCCESS**。包括上下文/基础接口 4 项、Repository 2 项、Service 6 项、业务 API 5 项。Repository 测试通过清除一级缓存再查询验证落库，Service 覆盖技能不匹配等失败分支，API 覆盖完整流程与 400/404/409。
 
-```powershell
-Invoke-RestMethod http://localhost:8080/api/hello
-Invoke-RestMethod http://localhost:8080/actuator/health
-```
+本机 MySQL 9.5 实测完成工单 1 的提交、审核、派单和接单；重复接单返回 409；应用重启后仍能查询到 ACCEPTED 状态和人员关联，证明数据持久化。详细证据、作业填写文本及截图步骤见 [第四周记录](docs/homework/week-04/index.md)。
 
-已有 `/api/status` 保持可用；未添加业务 CRUD、Service、Repository 或数据库模型。测试增加问候响应和 Actuator 健康检查验证，目前共 4 项测试，已全部通过（0 失败、0 错误）。实际启动后 `/api/hello` 和 `/actuator/health` 均已验证返回 HTTP 200，健康状态为 `UP`。
+## 当前尚未实现的能力
 
-### 启动测试
+- 登录认证、角色授权、住户身份校验和房屋管理；当前角色由接口调用行为模拟，不能用于真实多用户环境。
+- 上门时间预约与冲突检测、实际维修、报价、库存、支付、验收、评价、返修。
+- 原工单重提、重新派单、人员修改/删除、分页查询和完整操作审计。
+- 微服务拆分、消息队列、分布式事务、完整业务监控与容器部署。
 
-`CommunityRepairApplicationTests` 使用 `@SpringBootTest` 启动真实应用上下文及随机端口的 Web 服务，避免测试占用固定 8080 端口：
+数据库模型、Service、Repository 和业务 API 已在本周实现，不再属于“仅规划”。以下完整产品设计仍包含尚未实现的后续目标。
 
-- `contextLoads`：验证应用上下文和主配置类成功加载。
-- `statusEndpointReturnsApplicationAndUp`：发送真实 GET 请求，验证 HTTP 200、JSON 类型、应用名称及 `UP` 状态。
-- `helloEndpointReturnsProjectName`：验证问候接口返回项目名称和问候消息。
-- `actuatorHealthReturnsUp`：验证 Actuator 健康接口返回 HTTP 200，且 `status` 为 `UP`。
-
-### 当前验证结果（2026-09-28）
-
-在 `monolith/` 内使用 Git Bash 执行 `./mvnw test`，最终结果为：
-
-```text
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
-BUILD SUCCESS
-```
-
-`contextLoads` 通过，确认 Spring 应用上下文能够加载。应用也已在默认 8080 端口成功启动，问候接口和健康检查均返回 HTTP 200，健康状态为 `UP`。测试使用随机端口，不要求正式应用提前启动。
-
-### 当前尚未实现的业务能力
-
-目前只完成工程启动、问候/状态接口、Actuator 健康检查和自动化测试。以下内容均为规划，尚未实现：
-
-- 用户注册登录、身份认证、角色权限和房屋信息管理。
-- 住户提交报修、物业审核派单、维修人员接单和上门预约。
-- 报价确认、维修记录、材料库存及领用、费用结算和支付。
-- 住户验收、评价、返修、投诉、业务通知和统计报表。
-- 业务模型实体、Service、Repository、数据库持久化和业务 CRUD。
-- 微服务拆分、消息队列、跨服务事务、完整监控及容器化部署。
-
-Actuator 健康检查已提供，但完整业务监控仍未实现。后文的角色、功能模块和业务流程均描述未来目标，不表示当前已经具备这些能力。
-
-作业与运行截图见 [第三周完成汇总](docs/homework/week-03/index.md)，优先场景及两个核心模型见 [项目初步规划](docs/project-proposal.md)。
-
-后续课程的业务规划如下。
+资料：[项目规划](docs/project-proposal.md)｜[数据库设计](docs/database.md)｜[第三周](docs/homework/week-03/index.md)｜[第四周](docs/homework/week-04/index.md)。
 
 ## 一、项目目标和适用场景
 

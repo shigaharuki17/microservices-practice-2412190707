@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+Test set: com.zjgsu.hly.CommunityRepairApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.992 s -- in com.zjgsu.hly.CommunityRepairApplicationTests
+-------------------------------------------------------------------------------
+Test set: com.zjgsu.hly.controller.RepairApiTests
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.542 s -- in com.zjgsu.hly.controller.RepairApiTests
+-------------------------------------------------------------------------------
+Test set: com.zjgsu.hly.repository.RepairRepositoryTests
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.547 s -- in com.zjgsu.hly.repository.RepairRepositoryTests
+-------------------------------------------------------------------------------
+Test set: com.zjgsu.hly.service.RepairServiceTests
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.071 s -- in com.zjgsu.hly.service.RepairServiceTests
