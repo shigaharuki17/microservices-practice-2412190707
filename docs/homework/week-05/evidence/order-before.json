@@ -1,0 +1,13 @@
+{
+  "id": 2,
+  "residentName": "Week05 resident",
+  "contactPhone": "13900000005",
+  "location": "Building 5 Room 501",
+  "description": "Week05 persistence verification",
+  "category": "PLUMBING",
+  "status": "SUBMITTED",
+  "reviewNote": null,
+  "technicianId": null,
+  "createdAt": "2026-10-19T07:00:32.267259",
+  "updatedAt": "2026-10-19T07:00:32.267259"
+}

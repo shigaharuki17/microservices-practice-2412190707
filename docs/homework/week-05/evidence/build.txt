@@ -1,0 +1,221 @@
+$ sudo docker build --progress=plain -t community-repair:week05 ./monolith
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 391B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/eclipse-temurin:25-jre
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/library/maven:3.9-eclipse-temurin-25
+#3 DONE 0.1s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 145B done
+#4 DONE 0.0s
+
+#5 [runtime 1/3] FROM docker.io/library/eclipse-temurin:25-jre@sha256:dbb43d81099eec91e0800226ed2296d03146ee7857165b95112372ad0d67e87f
+#5 resolve docker.io/library/eclipse-temurin:25-jre@sha256:dbb43d81099eec91e0800226ed2296d03146ee7857165b95112372ad0d67e87f 0.0s done
+#5 DONE 0.0s
+
+#6 [runtime 2/3] WORKDIR /app
+#6 CACHED
+
+#7 [internal] load build context
+#7 transferring context: 34.73kB done
+#7 DONE 0.0s
+
+#8 [build 1/5] FROM docker.io/library/maven:3.9-eclipse-temurin-25@sha256:93b8a14ea2f412782e4e842651273b4d903e35cc496284f178fbbe2d67d00976
+#8 resolve docker.io/library/maven:3.9-eclipse-temurin-25@sha256:93b8a14ea2f412782e4e842651273b4d903e35cc496284f178fbbe2d67d00976 0.0s done
+#8 DONE 0.1s
+
+#9 [build 2/5] WORKDIR /workspace
+#9 DONE 0.0s
+
+#10 [build 3/5] COPY pom.xml .
+#10 DONE 0.0s
+
+#11 [build 4/5] COPY src ./src
+#11 DONE 0.0s
+
+#12 [build 5/5] RUN mvn -B -ntp clean verify
+#12 1.650 [INFO] Scanning for projects...
+#12 22.34 [INFO]
+#12 22.34 [INFO] -------------------< com.zjgsu.hly:community-repair >-------------------
+#12 22.34 [INFO] Building community-repair 0.0.1-SNAPSHOT
+#12 22.34 [INFO]   from pom.xml
+#12 22.34 [INFO] --------------------------------[ jar ]---------------------------------
+#12 221.1 [INFO]
+#12 221.1 [INFO] --- clean:3.5.0:clean (default-clean) @ community-repair ---
+#12 223.2 [INFO]
+#12 223.2 [INFO] --- resources:3.3.1:resources (default-resources) @ community-repair ---
+#12 233.8 [INFO] Copying 1 resource from src/main/resources to target/classes
+#12 233.8 [INFO] Copying 0 resource from src/main/resources to target/classes
+#12 233.8 [INFO]
+#12 233.8 [INFO] --- compiler:3.14.1:compile (default-compile) @ community-repair ---
+#12 250.7 [INFO] Recompiling the module because of changed source code.
+#12 250.7 [INFO] Compiling 15 source files with javac [debug parameters release 25] to target/classes
+#12 251.6 [INFO]
+#12 251.6 [INFO] --- resources:3.3.1:testResources (default-testResources) @ community-repair ---
+#12 251.6 [INFO] Copying 1 resource from src/test/resources to target/test-classes
+#12 251.6 [INFO]
+#12 251.6 [INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ community-repair ---
+#12 251.6 [INFO] Recompiling the module because of changed dependency.
+#12 251.6 [INFO] Compiling 4 source files with javac [debug parameters release 25] to target/test-classes
+#12 252.1 [INFO]
+#12 252.1 [INFO] --- surefire:3.5.6:test (default-test) @ community-repair ---
+#12 297.9 [INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+#12 319.6 [INFO]
+#12 319.6 [INFO] -------------------------------------------------------
+#12 319.6 [INFO]  T E S T S
+#12 319.6 [INFO] -------------------------------------------------------
+#12 320.3 [INFO] Running com.zjgsu.hly.controller.RepairApiTests
+#12 320.5 06:55:32.096 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.zjgsu.hly.controller.RepairApiTests]: RepairApiTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#12 320.6 06:55:32.219 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.zjgsu.hly.CommunityRepairApplication for test class com.zjgsu.hly.controller.RepairApiTests
+#12 320.7 06:55:32.270 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.zjgsu.hly.controller.RepairApiTests]: RepairApiTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#12 320.7 06:55:32.271 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.zjgsu.hly.CommunityRepairApplication for test class com.zjgsu.hly.controller.RepairApiTests
+#12 321.0
+#12 321.0   .   ____          _            __ _ _
+#12 321.0  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+#12 321.0 ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+#12 321.0  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+#12 321.0   '  |____| .__|_| |_|_| |_\__, | / / / /
+#12 321.0  =========|_|==============|___/=/_/_/_/
+#12 321.0
+#12 321.0  :: Spring Boot ::                (v4.0.8)
+#12 321.0
+#12 321.1 2026-10-19T06:55:32.652Z  INFO 91 --- [community-repair] [           main] c.zjgsu.hly.controller.RepairApiTests    : Starting RepairApiTests using Java 25.0.4.1 with PID 91 (started by root in /workspace)
+#12 321.1 2026-10-19T06:55:32.653Z  INFO 91 --- [community-repair] [           main] c.zjgsu.hly.controller.RepairApiTests    : The following 1 profile is active: "test"
+#12 321.7 2026-10-19T06:55:33.304Z  INFO 91 --- [community-repair] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+#12 321.7 2026-10-19T06:55:33.333Z  INFO 91 --- [community-repair] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 23 ms. Found 2 JPA repository interfaces.
+#12 322.1 2026-10-19T06:55:33.743Z  INFO 91 --- [community-repair] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 0 (http)
+#12 322.2 2026-10-19T06:55:33.757Z  INFO 91 --- [community-repair] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+#12 322.2 2026-10-19T06:55:33.758Z  INFO 91 --- [community-repair] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+#12 322.2 2026-10-19T06:55:33.792Z  INFO 91 --- [community-repair] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1118 ms
+#12 322.5 2026-10-19T06:55:34.126Z  INFO 91 --- [community-repair] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+#12 322.6 2026-10-19T06:55:34.161Z  INFO 91 --- [community-repair] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.24.Final
+#12 322.8 2026-10-19T06:55:34.423Z  INFO 91 --- [community-repair] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+#12 322.8 2026-10-19T06:55:34.441Z  INFO 91 --- [community-repair] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+#12 322.9 2026-10-19T06:55:34.548Z  INFO 91 --- [community-repair] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:repair_test user=SA
+#12 322.9 2026-10-19T06:55:34.549Z  INFO 91 --- [community-repair] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+#12 323.0 2026-10-19T06:55:34.587Z  INFO 91 --- [community-repair] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+#12 323.0 	Database JDBC URL [jdbc:h2:mem:repair_test]
+#12 323.0 	Database driver: H2 JDBC Driver
+#12 323.0 	Database dialect: H2Dialect
+#12 323.0 	Database version: 2.4.240
+#12 323.0 	Default catalog/schema: REPAIR_TEST/PUBLIC
+#12 323.0 	Autocommit mode: undefined/unknown
+#12 323.0 	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+#12 323.0 	JDBC fetch size: 100
+#12 323.0 	Pool: DataSourceConnectionProvider
+#12 323.0 	Minimum pool size: undefined/unknown
+#12 323.0 	Maximum pool size: undefined/unknown
+#12 323.7 2026-10-19T06:55:35.267Z  INFO 91 --- [community-repair] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+#12 323.8 2026-10-19T06:55:35.304Z  INFO 91 --- [community-repair] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+#12 323.8 2026-10-19T06:55:35.353Z  INFO 91 --- [community-repair] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+#12 324.4 2026-10-19T06:55:35.963Z  INFO 91 --- [community-repair] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+#12 324.5 2026-10-19T06:55:36.031Z  INFO 91 --- [community-repair] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 34601 (http) with context path '/'
+#12 324.5 2026-10-19T06:55:36.038Z  INFO 91 --- [community-repair] [           main] c.zjgsu.hly.controller.RepairApiTests    : Started RepairApiTests in 3.644 seconds (process running for 4.754)
+#12 324.6 Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+#12 324.8 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+#12 324.9 WARNING: A Java agent has been loaded dynamically (/root/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.8/byte-buddy-agent-1.17.8.jar)
+#12 324.9 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+#12 324.9 WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+#12 324.9 WARNING: Dynamic loading of agents will be disallowed by default in a future release
+#12 325.1 2026-10-19T06:55:36.671Z  INFO 91 --- [community-repair] [o-auto-1-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+#12 325.1 2026-10-19T06:55:36.671Z  INFO 91 --- [community-repair] [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+#12 325.1 2026-10-19T06:55:36.673Z  INFO 91 --- [community-repair] [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+#12 325.8 [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.514 s -- in com.zjgsu.hly.controller.RepairApiTests
+#12 325.8 [INFO] Running com.zjgsu.hly.repository.RepairRepositoryTests
+#12 325.8 2026-10-19T06:55:37.398Z  INFO 91 --- [community-repair] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.zjgsu.hly.repository.RepairRepositoryTests]: RepairRepositoryTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#12 325.8 2026-10-19T06:55:37.402Z  INFO 91 --- [community-repair] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.zjgsu.hly.CommunityRepairApplication for test class com.zjgsu.hly.repository.RepairRepositoryTests
+#12 325.8 2026-10-19T06:55:37.403Z  INFO 91 --- [community-repair] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.zjgsu.hly.repository.RepairRepositoryTests]: RepairRepositoryTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#12 325.9 2026-10-19T06:55:37.404Z  INFO 91 --- [community-repair] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.zjgsu.hly.CommunityRepairApplication for test class com.zjgsu.hly.repository.RepairRepositoryTests
+#12 325.9
+#12 325.9   .   ____          _            __ _ _
+#12 325.9  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+#12 325.9 ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+#12 325.9  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+#12 325.9   '  |____| .__|_| |_|_| |_\__, | / / / /
+#12 325.9  =========|_|==============|___/=/_/_/_/
+#12 325.9
+#12 325.9  :: Spring Boot ::                (v4.0.8)
+#12 325.9
+#12 325.9 2026-10-19T06:55:37.451Z  INFO 91 --- [community-repair] [           main] c.z.h.repository.RepairRepositoryTests   : Starting RepairRepositoryTests using Java 25.0.4.1 with PID 91 (started by root in /workspace)
+#12 325.9 2026-10-19T06:55:37.452Z  INFO 91 --- [community-repair] [           main] c.z.h.repository.RepairRepositoryTests   : The following 1 profile is active: "test"
+#12 326.0 2026-10-19T06:55:37.591Z  INFO 91 --- [community-repair] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+#12 326.0 2026-10-19T06:55:37.597Z  INFO 91 --- [community-repair] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 4 ms. Found 2 JPA repository interfaces.
+#12 326.1 2026-10-19T06:55:37.644Z  INFO 91 --- [community-repair] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+#12 326.1 2026-10-19T06:55:37.654Z  INFO 91 --- [community-repair] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+#12 326.1 2026-10-19T06:55:37.655Z  INFO 91 --- [community-repair] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+#12 326.1 2026-10-19T06:55:37.655Z  INFO 91 --- [community-repair] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:repair_test user=SA
+#12 326.1 2026-10-19T06:55:37.655Z  INFO 91 --- [community-repair] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+#12 326.1 2026-10-19T06:55:37.656Z  INFO 91 --- [community-repair] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+#12 326.1 	Database JDBC URL [jdbc:h2:mem:repair_test]
+#12 326.1 	Database driver: H2 JDBC Driver
+#12 326.1 	Database dialect: H2Dialect
+#12 326.1 	Database version: 2.4.240
+#12 326.1 	Default catalog/schema: REPAIR_TEST/PUBLIC
+#12 326.1 	Autocommit mode: undefined/unknown
+#12 326.1 	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+#12 326.1 	JDBC fetch size: 100
+#12 326.1 	Pool: DataSourceConnectionProvider
+#12 326.1 	Minimum pool size: undefined/unknown
+#12 326.1 	Maximum pool size: undefined/unknown
+#12 326.1 2026-10-19T06:55:37.675Z  INFO 91 --- [community-repair] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+#12 326.1 2026-10-19T06:55:37.680Z  INFO 91 --- [community-repair] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+#12 326.2 2026-10-19T06:55:37.796Z  INFO 91 --- [community-repair] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+#12 326.2 2026-10-19T06:55:37.804Z  INFO 91 --- [community-repair] [           main] c.z.h.repository.RepairRepositoryTests   : Started RepairRepositoryTests in 0.392 seconds (process running for 6.521)
+#12 326.2 2026-10-19T06:55:37.850Z  WARN 91 --- [community-repair] [           main] org.hibernate.orm.jdbc.error             : HHH000247: ErrorCode: 23505, SQLState: 23505
+#12 326.2 2026-10-19T06:55:37.851Z  WARN 91 --- [community-repair] [           main] org.hibernate.orm.jdbc.error             : Unique index or primary key violation: "PUBLIC.UK_TECHNICIAN_PHONE INDEX PUBLIC.UK_TECHNICIAN_PHONE_INDEX_5 ON PUBLIC.TECHNICIANS(PHONE NULLS FIRST) VALUES ( /* 2 */ '13800001002' )"; SQL statement:
+#12 326.2 insert into technicians (available,name,phone,skill,id) values (?,?,?,?,default) [23505-240]
+#12 326.2 [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.462 s -- in com.zjgsu.hly.repository.RepairRepositoryTests
+#12 326.3 [INFO] Running com.zjgsu.hly.CommunityRepairApplicationTests
+#12 326.3 2026-10-19T06:55:37.868Z  INFO 91 --- [community-repair] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.zjgsu.hly.CommunityRepairApplicationTests]: CommunityRepairApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#12 326.3 2026-10-19T06:55:37.876Z  INFO 91 --- [community-repair] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.zjgsu.hly.CommunityRepairApplication for test class com.zjgsu.hly.CommunityRepairApplicationTests
+#12 326.3 2026-10-19T06:55:37.876Z  INFO 91 --- [community-repair] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.zjgsu.hly.CommunityRepairApplicationTests]: CommunityRepairApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#12 326.3 2026-10-19T06:55:37.878Z  INFO 91 --- [community-repair] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.zjgsu.hly.CommunityRepairApplication for test class com.zjgsu.hly.CommunityRepairApplicationTests
+#12 326.3 [INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.070 s -- in com.zjgsu.hly.CommunityRepairApplicationTests
+#12 326.3 [INFO] Running com.zjgsu.hly.service.RepairServiceTests
+#12 326.3 2026-10-19T06:55:37.939Z  INFO 91 --- [community-repair] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.zjgsu.hly.service.RepairServiceTests]: RepairServiceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#12 326.3 2026-10-19T06:55:37.947Z  INFO 91 --- [community-repair] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.zjgsu.hly.CommunityRepairApplication for test class com.zjgsu.hly.service.RepairServiceTests
+#12 326.3 2026-10-19T06:55:37.947Z  INFO 91 --- [community-repair] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.zjgsu.hly.service.RepairServiceTests]: RepairServiceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#12 326.3 2026-10-19T06:55:37.949Z  INFO 91 --- [community-repair] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.zjgsu.hly.CommunityRepairApplication for test class com.zjgsu.hly.service.RepairServiceTests
+#12 326.5 [INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.143 s -- in com.zjgsu.hly.service.RepairServiceTests
+#12 326.5 [INFO]
+#12 326.5 [INFO] Results:
+#12 326.5 [INFO]
+#12 326.5 [INFO] Tests run: 17, Failures: 0, Errors: 0, Skipped: 0
+#12 326.5 [INFO]
+#12 326.5 [INFO]
+#12 326.5 [INFO] --- jar:3.4.2:jar (default-jar) @ community-repair ---
+#12 379.4 [INFO] Building jar: /workspace/target/community-repair-0.0.1-SNAPSHOT.jar
+#12 379.4 [INFO]
+#12 379.4 [INFO] --- spring-boot:4.0.8:repackage (repackage) @ community-repair ---
+#12 419.1 [INFO] Replacing main artifact /workspace/target/community-repair-0.0.1-SNAPSHOT.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+#12 419.1 [INFO] The original artifact has been renamed to /workspace/target/community-repair-0.0.1-SNAPSHOT.jar.original
+#12 419.1 [INFO] ------------------------------------------------------------------------
+#12 419.1 [INFO] BUILD SUCCESS
+#12 419.1 [INFO] ------------------------------------------------------------------------
+#12 419.1 [INFO] Total time:  06:57 min
+#12 419.1 [INFO] Finished at: 2026-10-19T06:57:10Z
+#12 419.1 [INFO] ------------------------------------------------------------------------
+#12 DONE 419.3s
+
+#13 [runtime 3/3] COPY --from=build --chown=10001:10001 /workspace/target/community-repair-0.0.1-SNAPSHOT.jar /app/app.jar
+#13 DONE 0.2s
+
+#14 exporting to image
+#14 exporting layers
+#14 exporting layers 1.4s done
+#14 exporting manifest sha256:0a5b0da425b44cdbb09ffab88bd38db1fbf9649c5d46d69a9c25c432e3159a8c
+#14 exporting manifest sha256:0a5b0da425b44cdbb09ffab88bd38db1fbf9649c5d46d69a9c25c432e3159a8c done
+#14 exporting config sha256:0c8cd9f1515bd7c153b0b3d7201d4f71006f853c4517f34864807268959f8202 done
+#14 exporting attestation manifest sha256:c7eb44d28d8111cad08854f76dee93efcdddd475bcce9765953dd1d46112fed5 done
+#14 exporting manifest list sha256:2eb46cdcb3d10e17b071393e6e6f13c7a6aa78badf8051a40994f833e8c1ac0f done
+#14 naming to docker.io/library/community-repair:week05 done
+#14 unpacking to docker.io/library/community-repair:week05
+#14 unpacking to docker.io/library/community-repair:week05 0.3s done
+#14 DONE 1.8s
+BUILD_EXIT_CODE=0

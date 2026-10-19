@@ -1,8 +1,46 @@
 # 社区报修与上门维修服务平台
 
-> 微服务开发与实践｜霍利屹｜2412190707｜第四周：单体应用与数据库持久化
+> 微服务开发与实践｜霍利屹｜2412190707｜第五周：Docker 容器化与持久化验证
 
 本项目解决社区报修信息分散、派单不及时和进度难追踪的问题。当前在原 `monolith/` 中实现“住户提交报修 → 物业审核 → 按技能派单 → 维修人员确认接单”的完整受理流程，并使用 MySQL 持久化。Java 基础包保持 `com.zjgsu.hly`，新增分层代码放入其子包。
+
+## 第五周：容器运行（推荐）
+
+本周使用 Docker 将现有应用和 MySQL 8.4.11 一起启动，无需在宿主机安装 Java 或 Maven。多阶段构建自动编译并运行测试，运行镜像仅包含 JRE 与应用 JAR。
+
+在 **Ubuntu 仓库根目录**执行：
+
+```bash
+cp .env.example .env
+# 编辑 .env，设置 MYSQL_PASSWORD 和 MYSQL_ROOT_PASSWORD
+sudo docker build -t community-repair:week05 ./monolith
+sudo docker compose up -d --build
+sudo docker compose ps
+sudo docker compose logs --tail=50 app
+```
+
+应用通过数据库服务名 `mysql` 连接，等待数据库健康后启动；真实 `.env` 已忽略，模板 `.env.example` 可提交。命名卷保留 MySQL 数据，容器内部应用端口 8080，宿主机映射 8081（可通过 APP_PORT 调整）。
+
+```bash
+curl --noproxy '*' -i http://localhost:8081/actuator/health
+curl --noproxy '*' -i -H 'Content-Type: application/json' --data-binary @monolith/examples/order.json http://localhost:8081/api/repair-orders
+curl --noproxy '*' -i http://localhost:8081/api/repair-orders
+```
+
+Windows 访问 VMware 中的应用时使用 `http://192.168.158.128:8081`，不是 Windows 的 localhost。Ubuntu 内使用 localhost。以上业务接口分别验证创建（201）和查询（200）。
+
+```bash
+python3 scripts/verify-container.py before
+sudo docker compose down
+sudo docker compose up -d
+# 等待健康接口返回 UP
+python3 scripts/verify-container.py after
+sudo docker compose stop
+```
+
+`down` 删除容器但保留数据卷；不要加 `-v`。`stop` 只停止服务，恢复使用 `sudo docker compose start`。修改 .env 中的数据库密码不会自动修改已有数据卷内的账号密码。
+
+本机共享挂载需先同步到 `~/community-repair-week05` 再构建，具体命令、实际验证结果和截图见 [第五周作业记录](docs/homework/week-05/index.md)。以下本地 Java/MySQL 启动说明仍供第四周开发使用。
 
 ## 环境要求
 
@@ -146,9 +184,9 @@ Windows PowerShell 使用 `.\mvnw.cmd test`。测试显式激活 `test` profile�
 - 登录认证、角色授权、住户身份校验和房屋管理；当前角色由接口调用行为模拟，不能用于真实多用户环境。
 - 上门时间预约与冲突检测、实际维修、报价、库存、支付、验收、评价、返修。
 - 原工单重提、重新派单、人员修改/删除、分页查询和完整操作审计。
-- 微服务拆分、消息队列、分布式事务、完整业务监控与容器部署。
+- 微服务拆分、消息队列、分布式事务、完整业务监控与生产部署；应用和 MySQL 的基础容器部署已在第五周完成。
 
-数据库模型、Service、Repository 和业务 API 已在本周实现，不再属于“仅规划”。以下完整产品设计仍包含尚未实现的后续目标。
+数据库模型、Service、Repository 和业务 API 已在第四周实现，不再属于“仅规划”。以下完整产品设计仍包含尚未实现的后续目标。
 
 资料：[项目规划](docs/project-proposal.md)｜[数据库设计](docs/database.md)｜[第三周](docs/homework/week-03/index.md)｜[第四周](docs/homework/week-04/index.md)。
 

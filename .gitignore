@@ -5,3 +5,5 @@
 
 .env*
 *.local.ps1
+
+!.env.example

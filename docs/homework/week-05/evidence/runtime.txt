@@ -1,0 +1,18 @@
+$ sudo docker image ls community-repair
+IMAGE                     ID             DISK USAGE   CONTENT SIZE   EXTRA
+community-repair:week05   1c26594069e5        588MB          171MB   U
+$ sudo docker run --rm --entrypoint sh community-repair:week05 [runtime checks]
+id: cannot find name for user ID 10001
+id: cannot find name for group ID 10001
+id: cannot find name for group ID 10001
+uid=10001(10001) gid=10001(10001) groups=10001(10001)
+openjdk version "25.0.4.1" 2026-08-18 LTS
+OpenJDK Runtime Environment Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS)
+OpenJDK 64-Bit Server VM Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS, mixed mode, sharing)
+JRE_AND_JAR_ONLY=PASS
+$ sudo docker compose ps
+NAME                       IMAGE                     COMMAND                   SERVICE   CREATED              STATUS                        PORTS
+community-repair-app-1     community-repair:week05   "java -jar /app/app.…"   app       About a minute ago   Up 54 seconds                 0.0.0.0:8081->8080/tcp, [::]:8081->8080/tcp
+community-repair-mysql-1   mysql:8.4.11              "docker-entrypoint.s…"   mysql     About a minute ago   Up About a minute (healthy)   3306/tcp, 33060/tcp
+$ sudo docker compose exec -T mysql mysql --version
+mysql  Ver 8.4.11 for Linux on x86_64 (MySQL Community Server - GPL)

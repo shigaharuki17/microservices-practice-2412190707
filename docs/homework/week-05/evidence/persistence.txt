@@ -1,0 +1,73 @@
+$ sudo docker compose ps
+NAME                       IMAGE                     COMMAND                   SERVICE   CREATED         STATUS                   PORTS
+community-repair-app-1     community-repair:week05   "java -jar /app/app.…"   app       2 minutes ago   Up About a minute        0.0.0.0:8081->8080/tcp, [::]:8081->8080/tcp
+community-repair-mysql-1   mysql:8.4.11              "docker-entrypoint.s…"   mysql     2 minutes ago   Up 2 minutes (healthy)   3306/tcp, 33060/tcp
+$ sudo docker image ls community-repair
+IMAGE                     ID             DISK USAGE   CONTENT SIZE   EXTRA
+community-repair:week05   1c26594069e5        588MB          171MB   U
+$ sudo docker compose exec -T mysql mysql --version
+mysql  Ver 8.4.11 for Linux on x86_64 (MySQL Community Server - GPL)
+$ sudo docker compose ps -q (before)
+2cb97fd85656ccf1e4400442f55c4694474c21efe8fc46484717b8b93590ebde
+225136261e663eb040cd4ef91dad51b52aba21df7f66385e0a728044571c7789
+$ sudo docker compose down
+ Container community-repair-app-1 Stopping
+ Container community-repair-app-1 Stopped
+ Container community-repair-app-1 Removing
+ Container community-repair-app-1 Removed
+ Container community-repair-mysql-1 Stopping
+ Container community-repair-mysql-1 Stopped
+ Container community-repair-mysql-1 Removing
+ Container community-repair-mysql-1 Removed
+ Network community-repair_repair-network Removing
+ Network community-repair_repair-network Removed
+$ sudo docker compose up -d
+ Network community-repair_repair-network Creating
+ Network community-repair_repair-network Creating
+ Network community-repair_repair-network Created
+ Network community-repair_repair-network Created
+ Container community-repair-mysql-1 Creating
+ Container community-repair-mysql-1 Created
+ Container community-repair-app-1 Creating
+ Container community-repair-app-1 Created
+ Container community-repair-mysql-1 Starting
+ Container community-repair-mysql-1 Started
+ Container community-repair-mysql-1 Waiting
+ Container community-repair-mysql-1 Healthy
+ Container community-repair-app-1 Starting
+ Container community-repair-app-1 Started
+$ sudo docker compose ps -q (after)
+5904a36c600844c745b3f0c538d2b120e5c82e9bc62341ac24aa44a202604155
+43e01088ee5df8a21892adc1966c3f3fe74ba8aacadb6ef1ba7e9c13d6d6b90a
+$ sudo docker compose ps
+NAME                       IMAGE                     COMMAND                   SERVICE   CREATED          STATUS                    PORTS
+community-repair-app-1     community-repair:week05   "java -jar /app/app.…"   app       12 seconds ago   Up 6 seconds              0.0.0.0:8081->8080/tcp, [::]:8081->8080/tcp
+community-repair-mysql-1   mysql:8.4.11              "docker-entrypoint.s…"   mysql     12 seconds ago   Up 11 seconds (healthy)   3306/tcp, 33060/tcp
+$ python3 scripts/verify-container.py after
+GET http://localhost:8081/actuator/health
+HTTP 200
+{
+  "groups": [
+    "liveness",
+    "readiness"
+  ],
+  "status": "UP"
+}
+GET http://localhost:8081/api/repair-orders/2
+HTTP 200
+{
+  "id": 2,
+  "residentName": "Week05 resident",
+  "contactPhone": "13900000005",
+  "location": "Building 5 Room 501",
+  "description": "Week05 persistence verification",
+  "category": "PLUMBING",
+  "status": "SUBMITTED",
+  "reviewNote": null,
+  "technicianId": null,
+  "createdAt": "2026-10-19T07:00:32.267259",
+  "updatedAt": "2026-10-19T07:00:32.267259"
+}
+PERSISTENCE=PASS: ID and all response fields are unchanged
+$ sudo docker volume inspect community-repair_mysql-data --format {{.Name}}
+community-repair_mysql-data

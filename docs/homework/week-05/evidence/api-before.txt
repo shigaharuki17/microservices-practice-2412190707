@@ -1,0 +1,41 @@
+GET http://localhost:8081/actuator/health
+HTTP 200
+{
+  "groups": [
+    "liveness",
+    "readiness"
+  ],
+  "status": "UP"
+}
+POST http://localhost:8081/api/repair-orders
+Request: {"residentName": "Week05 resident", "contactPhone": "13900000005", "location": "Building 5 Room 501", "description": "Week05 persistence verification", "category": "PLUMBING"}
+HTTP 201
+{
+  "id": 2,
+  "residentName": "Week05 resident",
+  "contactPhone": "13900000005",
+  "location": "Building 5 Room 501",
+  "description": "Week05 persistence verification",
+  "category": "PLUMBING",
+  "status": "SUBMITTED",
+  "reviewNote": null,
+  "technicianId": null,
+  "createdAt": "2026-10-19T07:00:32.267259342",
+  "updatedAt": "2026-10-19T07:00:32.267259342"
+}
+GET http://localhost:8081/api/repair-orders/2
+HTTP 200
+{
+  "id": 2,
+  "residentName": "Week05 resident",
+  "contactPhone": "13900000005",
+  "location": "Building 5 Room 501",
+  "description": "Week05 persistence verification",
+  "category": "PLUMBING",
+  "status": "SUBMITTED",
+  "reviewNote": null,
+  "technicianId": null,
+  "createdAt": "2026-10-19T07:00:32.267259",
+  "updatedAt": "2026-10-19T07:00:32.267259"
+}
+CREATE_AND_QUERY=PASS

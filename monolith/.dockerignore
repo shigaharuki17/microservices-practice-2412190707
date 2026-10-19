@@ -1,0 +1,14 @@
+target/
+.git/
+.idea/
+.vscode/
+*.iml
+*.log
+.env
+.env.*
+*.local.ps1
+.mvn/
+mvnw
+mvnw.cmd
+examples/
+scripts/
