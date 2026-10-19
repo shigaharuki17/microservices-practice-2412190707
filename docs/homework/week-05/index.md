@@ -92,14 +92,32 @@ Java 创建响应的时间为纳秒精度，MySQL DATETIME(6) 为微秒精度。
 
 ### Windows 自带截图工具取证
 
-截图目录为 `screenshots/`。只保存包含真实验证结果且不被聊天窗口遮挡的截图；原始文本日志已保存，图片尚待核对归档。
+以下四张图片由本人于 2026-10-19 使用 Windows 自带截图工具手动截取，已按原图归档到 `screenshots/`。
 
-1. 构建：显示 build.txt 末尾的 BUILD SUCCESS、镜像导出和退出码 0，保存 01-build.png。
-2. 服务：显示 `sudo docker compose ps`、镜像列表和 MySQL 版本，保存 02-compose.png。
-3. API：显示 api-before.txt 中请求地址、HTTP 201/200、工单响应，保存 03-api.png；可另保存健康响应。
-4. 持久化：显示 persistence.txt 中 down/up 命令、重建后的工单 2 及 PERSISTENCE=PASS，保存 04-persistence.png。与 API 图配对证明同一记录重建前后不变。
+| 图片 | 验证内容 | 作业系统上传位置 |
+|---|---|---|
+| [01-build.png](screenshots/01-build.png) | Maven BUILD SUCCESS、多阶段复制、镜像导出、构建退出码 0 | Dockerfile 与镜像构建 |
+| [02-compose.png](screenshots/02-compose.png) | 镜像列表、应用运行、8081 映射、MySQL healthy 和版本 8.4.11 | 镜像构建（补充）及 Compose 编排与启动 |
+| [03-api.png](screenshots/03-api.png) | 健康检查 200/UP、创建工单 201、查询工单 2 返回 200 | 个人业务 API 验证及持久化验证（重建前） |
+| [04-persistence.png](screenshots/04-persistence.png) | down/up 删除重建、容器 ID 变化、同一工单 2 查询成功、PERSISTENCE=PASS | 数据持久化验证（重建后） |
 
-使用 Windows“截图工具”选择窗口或矩形模式，只截 VMware 中的验证终端。每小题上传相关图片 1–5 张。
+API 和持久化截图展示实际执行后保存的验证日志，画面中标明 Recorded results；持久化画面是完整日志的关键行节选。原始记录和前后数据快照保存在上方 evidence 链接中，可与截图交叉核对。工单 2 的 ID、业务字段和查询时间字段在重建前后保持一致。
+
+#### 镜像构建成功
+
+![多阶段镜像构建成功](screenshots/01-build.png)
+
+#### 镜像与服务状态
+
+![镜像列表与 Compose 服务状态](screenshots/02-compose.png)
+
+#### 个人业务接口
+
+![健康检查与创建查询接口验证](screenshots/03-api.png)
+
+#### 容器重建后的数据保留
+
+![容器重建后同一工单数据保持不变](screenshots/04-persistence.png)
 
 ## 6. 作业系统填写文本
 
