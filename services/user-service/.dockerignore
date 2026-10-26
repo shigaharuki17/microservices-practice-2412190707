@@ -1,0 +1,6 @@
+target/
+.env*
+*.local.ps1
+.idea/
+.git/
+*.log

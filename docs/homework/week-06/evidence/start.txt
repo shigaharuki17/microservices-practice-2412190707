@@ -1,0 +1,55 @@
+$ docker compose up -d
+ Network community-repair-services_default Creating
+ Network community-repair-services_default Creating
+ Volume community-repair-services_repair-data Creating
+ Volume community-repair-services_repair-data Creating
+ Volume community-repair-services_technician-data Creating
+ Volume community-repair-services_technician-data Creating
+ Volume community-repair-services_user-data Creating
+ Volume community-repair-services_user-data Creating
+ Volume community-repair-services_technician-data Created
+ Volume community-repair-services_technician-data Created
+ Volume community-repair-services_repair-data Created
+ Volume community-repair-services_repair-data Created
+ Volume community-repair-services_user-data Created
+ Volume community-repair-services_user-data Created
+ Network community-repair-services_default Created
+ Network community-repair-services_default Created
+ Container community-repair-services-user-db-1 Creating
+ Container community-repair-services-technician-db-1 Creating
+ Container community-repair-services-repair-db-1 Creating
+ Container community-repair-services-repair-db-1 Created
+ Container community-repair-services-repair-service-1 Creating
+ Container community-repair-services-user-db-1 Created
+ Container community-repair-services-user-service-1 Creating
+ Container community-repair-services-technician-db-1 Created
+ Container community-repair-services-technician-service-1 Creating
+ Container community-repair-services-repair-service-1 Created
+ Container community-repair-services-user-service-1 Created
+ Container community-repair-services-technician-service-1 Created
+ Container community-repair-services-user-db-1 Starting
+ Container community-repair-services-technician-db-1 Starting
+ Container community-repair-services-repair-db-1 Starting
+ Container community-repair-services-user-db-1 Started
+ Container community-repair-services-user-db-1 Waiting
+ Container community-repair-services-technician-db-1 Started
+ Container community-repair-services-technician-db-1 Waiting
+ Container community-repair-services-repair-db-1 Started
+ Container community-repair-services-repair-db-1 Waiting
+ Container community-repair-services-technician-db-1 Healthy
+ Container community-repair-services-technician-service-1 Starting
+ Container community-repair-services-technician-service-1 Started
+ Container community-repair-services-repair-db-1 Healthy
+ Container community-repair-services-repair-service-1 Starting
+ Container community-repair-services-repair-service-1 Started
+ Container community-repair-services-user-db-1 Healthy
+ Container community-repair-services-user-service-1 Starting
+ Container community-repair-services-user-service-1 Started
+$ docker compose ps
+NAME                                             IMAGE                                        COMMAND                   SERVICE              CREATED          STATUS                    PORTS
+community-repair-services-repair-db-1            mysql:8.4.11                                 "docker-entrypoint.s…"   repair-db            29 seconds ago   Up 27 seconds (healthy)   3306/tcp, 33060/tcp
+community-repair-services-repair-service-1       community-repair/repair-service:week06       "java -jar /app/app.…"   repair-service       29 seconds ago   Up 5 seconds              0.0.0.0:8093->8093/tcp, [::]:8093->8093/tcp
+community-repair-services-technician-db-1        mysql:8.4.11                                 "docker-entrypoint.s…"   technician-db        29 seconds ago   Up 28 seconds (healthy)   3306/tcp, 33060/tcp
+community-repair-services-technician-service-1   community-repair/technician-service:week06   "java -jar /app/app.…"   technician-service   29 seconds ago   Up 6 seconds              0.0.0.0:8092->8092/tcp, [::]:8092->8092/tcp
+community-repair-services-user-db-1              mysql:8.4.11                                 "docker-entrypoint.s…"   user-db              29 seconds ago   Up 28 seconds (healthy)   3306/tcp, 33060/tcp
+community-repair-services-user-service-1         community-repair/user-service:week06         "java -jar /app/app.…"   user-service         29 seconds ago   Up 1 second               0.0.0.0:8091->8091/tcp, [::]:8091->8091/tcp

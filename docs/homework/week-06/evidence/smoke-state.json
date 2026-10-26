@@ -1,0 +1,12 @@
+{
+  "residentId": 1,
+  "technicianId": 1,
+  "orderId": 1,
+  "approvedOrderId": 2,
+  "create": {
+    "residentId": 1,
+    "location": "Building 6 Room 601",
+    "description": "Week06 leaking pipe",
+    "category": "PLUMBING"
+  }
+}

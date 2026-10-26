@@ -1,0 +1,35 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>独立 Maven 工程与真实 HTTP 客户端</title><style>*{box-sizing:border-box}body{margin:0;padding:36px 44px;background:#edf2f7;color:#152235;font:17px "Microsoft YaHei",Arial,sans-serif}header{border-left:7px solid #187a73;padding:2px 0 2px 20px;margin-bottom:22px}h1{font-size:31px;margin:0 0 9px}h2{font-size:21px;margin:0 0 14px}p{line-height:1.7;margin:8px 0}small{font-size:13px;color:#526478}section{padding:22px;background:white;border:1px solid #d8e2ec;border-radius:12px;margin:16px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.grid section{margin:0}table{width:100%;border-collapse:collapse;font-size:16px}th,td{text-align:left;padding:11px;border-bottom:1px solid #dbe4ed;vertical-align:top}th{background:#edf4f8}pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font:15px Consolas,"Microsoft YaHei",monospace;margin:10px 0 0;color:#dceaf6;background:#172536;padding:17px;border-radius:8px}code{font-family:Consolas,monospace}.ok{color:#10745f;font-weight:bold}.tag{display:inline-block;background:#dff3ec;color:#116651;border-radius:7px;padding:6px 12px}.flow{display:flex;align-items:center;justify-content:space-around;text-align:center;margin:18px 0}.box{background:#e6f1fa;border:1px solid #a9c6dc;border-radius:9px;padding:15px 22px}.arrow{font-size:26px;color:#347b85}.muted{color:#526478}footer{font-size:13px;color:#526478;padding-top:10px}</style><header><h1>独立 Maven 工程与真实 HTTP 客户端</h1><small>源码：services/repair-service/src/main/java/com/zjgsu/hly/client/DependencyClient.java</small></header><section><span class="tag">RestTemplate · 连接 / 读取超时 · 404 / 502 / 503</span><pre>package com.zjgsu.hly.client;
+
+    public DependencyClient(@Value(&quot;${dependencies.user-url}&quot;) String userUrl,
+            @Value(&quot;${dependencies.technician-url}&quot;) String technicianUrl,
+            @Value(&quot;${dependencies.connect-timeout-ms:2000}&quot;) int connectMs,
+            @Value(&quot;${dependencies.read-timeout-ms:3000}&quot;) int readMs) {
+        this.userUrl=userUrl; this.technicianUrl=technicianUrl;
+        var client=HttpClient.newBuilder().connectTimeout(Duration.ofMillis(connectMs)).build();
+        var factory=new JdkClientHttpRequestFactory(client);
+        factory.setReadTimeout(Duration.ofMillis(readMs));
+        http=new RestTemplate(factory);
+    }
+    public ResidentInfo resident(Long id) { return get(userUrl+&quot;/api/residents/&quot;+id,ResidentInfo.class); }
+    public TechnicianInfo technician(Long id) { return get(technicianUrl+&quot;/api/technicians/&quot;+id,TechnicianInfo.class); }
+    private &lt;T&gt; T get(String url, Class&lt;T&gt; type) {
+        try {
+            T result=http.getForObject(url,type);
+            if(result==null) throw new BusinessException(502,&quot;依赖服务返回空响应&quot;);
+            return result;
+        } catch(HttpClientErrorException.NotFound e) {
+            throw new BusinessException(404,&quot;依赖资源不存在&quot;);
+        } catch(RestClientResponseException e) {
+            throw new BusinessException(502,&quot;依赖服务返回错误响应&quot;);
+        } catch(RestClientException e) {
+            throw new BusinessException(503,&quot;依赖服务不可用或请求超时&quot;);
+        }
+    }
+}
+</pre></section><section><h2>各服务测试结果（Windows 实际执行）</h2><small>来源：evidence/windows-tests.txt / 各工程 target/surefire-reports</small><pre>Service: user-service
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.763 s -- in com.zjgsu.hly.ResidentTests
+Service: technician-service
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.39 s -- in com.zjgsu.hly.TechnicianTests
+Service: repair-service
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.893 s -- in com.zjgsu.hly.DependencyHttpTests
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.673 s -- in com.zjgsu.hly.RepairTests</pre></section><footer>社区报修与上门维修服务平台 · 第六周 · 2026-10-26<br>本页是项目源码/实际验证记录的证据报告。后台浏览器截图，未模拟 IDE 或终端画面；原始文件可交叉核对。</footer></html>

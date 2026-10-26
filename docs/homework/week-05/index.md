@@ -1,5 +1,7 @@
 # 第五周：Docker 容器化与持久化验证
 
+> 第六周起根目录 Compose 已升级为微服务编排。复现本页所有 docker compose 命令时添加 `-f compose.monolith.yaml`，该文件保留原第五周配置。
+
 项目：社区报修与上门维修服务平台。继续使用原 `monolith/` 工程。
 
 ## 1. Dockerfile 与镜像构建

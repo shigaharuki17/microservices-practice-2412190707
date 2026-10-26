@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: repair-service
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/repair_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8}
+    username: ${DB_USERNAME:repair_db_app}
+    password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 3
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+server:
+  port: ${SERVER_PORT:8093}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+dependencies:
+  user-url: ${USER_SERVICE_URL:http://localhost:8091}
+  technician-url: ${TECHNICIAN_SERVICE_URL:http://localhost:8092}
+  connect-timeout-ms: ${HTTP_CONNECT_TIMEOUT_MS:2000}
+  read-timeout-ms: ${HTTP_READ_TIMEOUT_MS:3000}

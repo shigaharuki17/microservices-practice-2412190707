@@ -1,0 +1,84 @@
+GET http://localhost:8091/actuator/health
+HTTP 200
+{"groups": ["liveness", "readiness"], "status": "UP"}
+GET http://localhost:8092/actuator/health
+HTTP 200
+{"groups": ["liveness", "readiness"], "status": "UP"}
+GET http://localhost:8093/actuator/health
+HTTP 200
+{"groups": ["liveness", "readiness"], "status": "UP"}
+POST http://localhost:8091/api/residents
+HTTP 201
+{"id": 1, "name": "Week06 Resident", "phone": "13905100680"}
+POST http://localhost:8092/api/technicians
+HTTP 201
+{"id": 1, "name": "Week06 Plumber", "phone": "13805100680", "skill": "PLUMBING", "available": true}
+POST http://localhost:8093/api/repair-orders
+HTTP 201
+{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:03.7945271", "description": "Week06 leaking pipe", "id": 1, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": null, "status": "SUBMITTED", "technicianId": null, "updatedAt": "2026-10-26T06:41:03.7945271", "version": 0}
+POST http://localhost:8093/api/repair-orders/1/review
+HTTP 200
+{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:03.794527", "description": "Week06 leaking pipe", "id": 1, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Approved", "status": "APPROVED", "technicianId": null, "updatedAt": "2026-10-26T06:41:04.014544895", "version": 1}
+POST http://localhost:8093/api/repair-orders/1/assign
+HTTP 200
+{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:03.794527", "description": "Week06 leaking pipe", "id": 1, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Approved", "status": "ASSIGNED", "technicianId": 1, "updatedAt": "2026-10-26T06:41:04.190899626", "version": 2}
+POST http://localhost:8093/api/repair-orders/1/accept
+HTTP 200
+{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:03.794527", "description": "Week06 leaking pipe", "id": 1, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Approved", "status": "ACCEPTED", "technicianId": 1, "updatedAt": "2026-10-26T06:41:04.267114353", "version": 3}
+GET http://localhost:8093/api/repair-orders/1
+HTTP 200
+{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:03.794527", "description": "Week06 leaking pipe", "id": 1, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Approved", "status": "ACCEPTED", "technicianId": 1, "updatedAt": "2026-10-26T06:41:04.267114", "version": 3}
+GET http://localhost:8093/api/repair-orders
+HTTP 200
+[{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:03.794527", "description": "Week06 leaking pipe", "id": 1, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Approved", "status": "ACCEPTED", "technicianId": 1, "updatedAt": "2026-10-26T06:41:04.267114", "version": 3}]
+POST http://localhost:8093/api/repair-orders
+HTTP 404
+{"status": 404, "message": "依赖资源不存在"}
+GET http://localhost:8093/api/repair-orders
+HTTP 200
+[{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:03.794527", "description": "Week06 leaking pipe", "id": 1, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Approved", "status": "ACCEPTED", "technicianId": 1, "updatedAt": "2026-10-26T06:41:04.267114", "version": 3}]
+MISSING_RESOURCE=PASS; local row count unchanged: 1
+POST http://localhost:8093/api/repair-orders
+HTTP 201
+{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:04.78967614", "description": "Week06 leaking pipe", "id": 2, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": null, "status": "SUBMITTED", "technicianId": null, "updatedAt": "2026-10-26T06:41:04.78967614", "version": 0}
+POST http://localhost:8093/api/repair-orders/2/review
+HTTP 200
+{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:04.789676", "description": "Week06 leaking pipe", "id": 2, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Waiting", "status": "APPROVED", "technicianId": null, "updatedAt": "2026-10-26T06:41:04.849147462", "version": 1}
+POST http://localhost:8092/api/technicians
+HTTP 201
+{"id": 2, "name": "Week06 Electrician", "phone": "13705100680", "skill": "ELECTRICAL", "available": true}
+POST http://localhost:8093/api/repair-orders/2/assign
+HTTP 409
+{"status": 409, "message": "技能与报修类别不匹配"}
+GET http://localhost:8093/api/repair-orders/2
+HTTP 200
+{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:04.789676", "description": "Week06 leaking pipe", "id": 2, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Waiting", "status": "APPROVED", "technicianId": null, "updatedAt": "2026-10-26T06:41:04.849147", "version": 1}
+CROSS_SERVICE_WORKFLOW=PASS; SUBMITTED -> APPROVED -> ASSIGNED -> ACCEPTED
+SMOKE_PHASE_NORMAL=PASS
+$ docker compose stop user-service
+ Container community-repair-services-user-service-1 Stopping
+ Container community-repair-services-user-service-1 Stopped
+GET http://localhost:8093/api/repair-orders
+HTTP 200
+[{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:03.794527", "description": "Week06 leaking pipe", "id": 1, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Approved", "status": "ACCEPTED", "technicianId": 1, "updatedAt": "2026-10-26T06:41:04.267114", "version": 3}, {"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:04.789676", "description": "Week06 leaking pipe", "id": 2, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Waiting", "status": "APPROVED", "technicianId": null, "updatedAt": "2026-10-26T06:41:04.849147", "version": 1}]
+POST http://localhost:8093/api/repair-orders
+HTTP 503
+{"status": 503, "message": "依赖服务不可用或请求超时"}
+GET http://localhost:8093/api/repair-orders
+HTTP 200
+[{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:03.794527", "description": "Week06 leaking pipe", "id": 1, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Approved", "status": "ACCEPTED", "technicianId": 1, "updatedAt": "2026-10-26T06:41:04.267114", "version": 3}, {"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:04.789676", "description": "Week06 leaking pipe", "id": 2, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Waiting", "status": "APPROVED", "technicianId": null, "updatedAt": "2026-10-26T06:41:04.849147", "version": 1}]
+DEPENDENCY_UNAVAILABLE=PASS; HTTP 503; local row count unchanged: 2
+SMOKE_PHASE_OUTAGE=PASS
+$ docker compose start user-service
+ Container community-repair-services-user-db-1 Waiting
+ Container community-repair-services-user-db-1 Healthy
+ Container community-repair-services-user-service-1 Starting
+ Container community-repair-services-user-service-1 Started
+GET http://localhost:8091/actuator/health
+HTTP 200
+{"groups": ["liveness", "readiness"], "status": "UP"}
+GET http://localhost:8093/api/repair-orders/1
+HTTP 200
+{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:03.794527", "description": "Week06 leaking pipe", "id": 1, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Approved", "status": "ACCEPTED", "technicianId": 1, "updatedAt": "2026-10-26T06:41:04.267114", "version": 3}
+RECOVERY=PASS; existing order remains ACCEPTED
+SMOKE_PHASE_RECOVERY=PASS

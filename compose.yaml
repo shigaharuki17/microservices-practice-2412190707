@@ -1,32 +1,31 @@
-name: community-repair
+name: community-repair-services
 services:
-  app:
-    image: community-repair:week05
+  user-service:
+    image: community-repair/user-service:week06
     build:
-      context: ./monolith
+      context: ./services/user-service
     ports:
-      - "${APP_PORT:-8081}:8080"
+      - "${USER_PORT:-8091}:8091"
     environment:
-      SERVER_PORT: "8080"
-      DB_URL: "jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-community_repair}?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8"
-      DB_USERNAME: "${MYSQL_USER:-community_app}"
-      DB_PASSWORD: "${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}"
-      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=60.0"
+      SERVER_PORT: "8091"
+      DB_URL: "jdbc:mysql://user-db:3306/user_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8"
+      DB_USERNAME: user_app
+      DB_PASSWORD: "${USER_DB_PASSWORD:?Set USER_DB_PASSWORD in .env}"
+      JAVA_TOOL_OPTIONS: "-Xmx192m -XX:MaxMetaspaceSize=192m -XX:ActiveProcessorCount=2"
     depends_on:
-      mysql:
+      user-db:
         condition: service_healthy
     restart: unless-stopped
-    networks:
-      - repair-network
-  mysql:
+  user-db:
     image: mysql:8.4.11
+    command: ["--performance-schema=OFF", "--innodb-buffer-pool-size=64M", "--max-connections=30"]
     environment:
-      MYSQL_DATABASE: "${MYSQL_DATABASE:-community_repair}"
-      MYSQL_USER: "${MYSQL_USER:-community_app}"
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}"
+      MYSQL_DATABASE: user_db
+      MYSQL_USER: user_app
+      MYSQL_PASSWORD: "${USER_DB_PASSWORD:?Set USER_DB_PASSWORD in .env}"
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - user-data:/var/lib/mysql
     healthcheck:
       test:
         - CMD-SHELL
@@ -36,11 +35,87 @@ services:
       interval: 5s
       timeout: 5s
       retries: 30
-      start_period: 30s
+      start_period: 40s
     restart: unless-stopped
-    networks:
-      - repair-network
-networks:
-  repair-network:
+  technician-service:
+    image: community-repair/technician-service:week06
+    build:
+      context: ./services/technician-service
+    ports:
+      - "${TECHNICIAN_PORT:-8092}:8092"
+    environment:
+      SERVER_PORT: "8092"
+      DB_URL: "jdbc:mysql://technician-db:3306/technician_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8"
+      DB_USERNAME: technician_app
+      DB_PASSWORD: "${TECHNICIAN_DB_PASSWORD:?Set TECHNICIAN_DB_PASSWORD in .env}"
+      JAVA_TOOL_OPTIONS: "-Xmx192m -XX:MaxMetaspaceSize=192m -XX:ActiveProcessorCount=2"
+    depends_on:
+      technician-db:
+        condition: service_healthy
+    restart: unless-stopped
+  technician-db:
+    image: mysql:8.4.11
+    command: ["--performance-schema=OFF", "--innodb-buffer-pool-size=64M", "--max-connections=30"]
+    environment:
+      MYSQL_DATABASE: technician_db
+      MYSQL_USER: technician_app
+      MYSQL_PASSWORD: "${TECHNICIAN_DB_PASSWORD:?Set TECHNICIAN_DB_PASSWORD in .env}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}"
+    volumes:
+      - technician-data:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          MYSQL_PWD="$$MYSQL_PASSWORD" mysql --protocol=TCP -h 127.0.0.1
+          -u"$$MYSQL_USER" -D"$$MYSQL_DATABASE" -e "SELECT 1" >/dev/null 2>&1
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+    restart: unless-stopped
+  repair-service:
+    image: community-repair/repair-service:week06
+    build:
+      context: ./services/repair-service
+    ports:
+      - "${REPAIR_PORT:-8093}:8093"
+    environment:
+      SERVER_PORT: "8093"
+      DB_URL: "jdbc:mysql://repair-db:3306/repair_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8"
+      DB_USERNAME: repair_app
+      DB_PASSWORD: "${REPAIR_DB_PASSWORD:?Set REPAIR_DB_PASSWORD in .env}"
+      JAVA_TOOL_OPTIONS: "-Xmx192m -XX:MaxMetaspaceSize=192m -XX:ActiveProcessorCount=2"
+      USER_SERVICE_URL: http://user-service:8091
+      TECHNICIAN_SERVICE_URL: http://technician-service:8092
+      HTTP_CONNECT_TIMEOUT_MS: "2000"
+      HTTP_READ_TIMEOUT_MS: "3000"
+    depends_on:
+      repair-db:
+        condition: service_healthy
+    restart: unless-stopped
+  repair-db:
+    image: mysql:8.4.11
+    command: ["--performance-schema=OFF", "--innodb-buffer-pool-size=64M", "--max-connections=30"]
+    environment:
+      MYSQL_DATABASE: repair_db
+      MYSQL_USER: repair_app
+      MYSQL_PASSWORD: "${REPAIR_DB_PASSWORD:?Set REPAIR_DB_PASSWORD in .env}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}"
+    volumes:
+      - repair-data:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          MYSQL_PWD="$$MYSQL_PASSWORD" mysql --protocol=TCP -h 127.0.0.1
+          -u"$$MYSQL_USER" -D"$$MYSQL_DATABASE" -e "SELECT 1" >/dev/null 2>&1
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+    restart: unless-stopped
 volumes:
-  mysql-data:
+  user-data:
+  technician-data:
+  repair-data:

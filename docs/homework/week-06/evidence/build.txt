@@ -1,0 +1,478 @@
+$ COMPOSE_PARALLEL_LIMIT=1 docker compose build --progress plain
+--progress is a global compose flag, better use `docker compose --progress xx build ...
+ Image community-repair/technician-service:week06 Building
+ Image community-repair/repair-service:week06 Building
+ Image community-repair/user-service:week06 Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.76kB done
+#1 DONE 0.0s
+
+#2 [user-service internal] load build definition from Dockerfile
+#2 transferring dockerfile: 420B done
+#2 DONE 0.0s
+
+#3 [technician-service internal] load build definition from Dockerfile
+#3 transferring dockerfile: 426B done
+#3 DONE 0.0s
+
+#4 [repair-service internal] load build definition from Dockerfile
+#4 transferring dockerfile: 422B done
+#4 DONE 0.0s
+
+#5 [repair-service internal] load metadata for docker.io/library/eclipse-temurin:25-jre
+#5 DONE 0.1s
+
+#6 [technician-service internal] load metadata for docker.io/library/maven:3.9-eclipse-temurin-25
+#6 DONE 0.1s
+
+#7 [user-service internal] load .dockerignore
+#7 transferring context: 85B done
+#7 DONE 0.0s
+
+#8 [technician-service internal] load .dockerignore
+#8 transferring context: 85B 0.0s done
+#8 DONE 0.0s
+
+#9 [repair-service internal] load .dockerignore
+#9 transferring context: 85B done
+#9 DONE 0.0s
+
+#10 [technician-service internal] load build context
+#10 DONE 0.0s
+
+#11 [user-service internal] load build context
+#11 DONE 0.0s
+
+#12 [repair-service internal] load build context
+#12 DONE 0.0s
+
+#13 [repair-service build 1/5] FROM docker.io/library/maven:3.9-eclipse-temurin-25@sha256:93b8a14ea2f412782e4e842651273b4d903e35cc496284f178fbbe2d67d00976
+#13 resolve docker.io/library/maven:3.9-eclipse-temurin-25@sha256:93b8a14ea2f412782e4e842651273b4d903e35cc496284f178fbbe2d67d00976 0.1s done
+#13 resolve docker.io/library/maven:3.9-eclipse-temurin-25@sha256:93b8a14ea2f412782e4e842651273b4d903e35cc496284f178fbbe2d67d00976 0.1s done
+#13 DONE 0.1s
+
+#14 [user-service stage-1 1/3] FROM docker.io/library/eclipse-temurin:25-jre@sha256:dbb43d81099eec91e0800226ed2296d03146ee7857165b95112372ad0d67e87f
+#14 resolve docker.io/library/eclipse-temurin:25-jre@sha256:dbb43d81099eec91e0800226ed2296d03146ee7857165b95112372ad0d67e87f 0.1s done
+#14 DONE 0.1s
+
+#15 [user-service stage-1 2/3] WORKDIR /app
+#15 CACHED
+
+#12 [repair-service internal] load build context
+#12 transferring context: 1.80kB 0.0s done
+#12 DONE 0.0s
+
+#10 [technician-service internal] load build context
+#10 transferring context: 1.62kB 0.0s done
+#10 DONE 0.0s
+
+#16 [repair-service build 3/5] COPY pom.xml .
+#16 CACHED
+
+#17 [repair-service build 4/5] COPY src ./src
+#17 CACHED
+
+#11 [user-service internal] load build context
+#11 transferring context: 1.60kB 0.0s done
+#11 DONE 0.1s
+
+#18 [technician-service build 3/5] COPY pom.xml .
+#18 CACHED
+
+#19 [technician-service build 2/5] WORKDIR /workspace
+#19 CACHED
+
+#20 [technician-service build 4/5] COPY src ./src
+#20 CACHED
+
+#21 [user-service build 3/5] COPY pom.xml .
+#21 CACHED
+
+#19 [user-service build 2/5] WORKDIR /workspace
+#19 CACHED
+
+#22 [user-service build 4/5] COPY src ./src
+#22 CACHED
+
+#23 [user-service build 5/5] RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -B -ntp verify
+#23 ...
+
+#24 [repair-service build 5/5] RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -B -ntp verify
+#24 3.726 [INFO] Scanning for projects...
+#24 4.277 [INFO]
+#24 4.279 [INFO] --------------------< com.zjgsu.hly:repair-service >--------------------
+#24 4.280 [INFO] Building repair-service 0.0.1-SNAPSHOT
+#24 4.280 [INFO]   from pom.xml
+#24 4.284 [INFO] --------------------------------[ jar ]---------------------------------
+#24 5.370 [INFO]
+#24 5.372 [INFO] --- resources:3.3.1:resources (default-resources) @ repair-service ---
+#24 5.674 [INFO] Copying 1 resource from src/main/resources to target/classes
+#24 5.704 [INFO] Copying 0 resource from src/main/resources to target/classes
+#24 5.711 [INFO]
+#24 5.711 [INFO] --- compiler:3.14.1:compile (default-compile) @ repair-service ---
+#24 5.912 [INFO] Recompiling the module because of changed source code.
+#24 5.931 [INFO] Compiling 9 source files with javac [debug parameters release 25] to target/classes
+#24 7.722 [INFO]
+#24 7.724 [INFO] --- resources:3.3.1:testResources (default-testResources) @ repair-service ---
+#24 7.734 [INFO] Copying 1 resource from src/test/resources to target/test-classes
+#24 7.737 [INFO]
+#24 7.738 [INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ repair-service ---
+#24 7.754 [INFO] Recompiling the module because of changed dependency.
+#24 7.758 [INFO] Compiling 2 source files with javac [debug parameters release 25] to target/test-classes
+#24 8.675 [INFO]
+#24 8.676 [INFO] --- surefire:3.5.6:test (default-test) @ repair-service ---
+#24 8.992 [INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+#24 9.090 [INFO]
+#24 9.092 [INFO] -------------------------------------------------------
+#24 9.093 [INFO]  T E S T S
+#24 9.093 [INFO] -------------------------------------------------------
+#24 ...
+
+#25 [technician-service build 5/5] RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -B -ntp verify
+#25 ...
+
+#24 [repair-service build 5/5] RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -B -ntp verify
+#24 10.43 [INFO] Running com.zjgsu.hly.RepairTests
+#24 10.73 06:36:31.244 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.zjgsu.hly.RepairTests]: RepairTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#24 11.03 06:36:31.517 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.zjgsu.hly.RepairApplication for test class com.zjgsu.hly.RepairTests
+#24 11.03 06:36:31.605 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.zjgsu.hly.RepairTests]: RepairTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#24 11.03 06:36:31.607 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.zjgsu.hly.RepairApplication for test class com.zjgsu.hly.RepairTests
+#24 11.64
+#24 11.65   .   ____          _            __ _ _
+#24 11.65  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+#24 11.65 ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+#24 11.65  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+#24 11.65   '  |____| .__|_| |_|_| |_\__, | / / / /
+#24 11.65  =========|_|==============|___/=/_/_/_/
+#24 11.65
+#24 11.65  :: Spring Boot ::                (v4.0.8)
+#24 11.65
+#24 11.75 2026-10-26T06:36:32.274Z  INFO 65 --- [repair-service] [           main] com.zjgsu.hly.RepairTests                : Starting RepairTests using Java 25.0.4.1 with PID 65 (started by root in /workspace)
+#24 11.75 2026-10-26T06:36:32.277Z  INFO 65 --- [repair-service] [           main] com.zjgsu.hly.RepairTests                : The following 1 profile is active: "test"
+#24 13.28 2026-10-26T06:36:33.838Z  INFO 65 --- [repair-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+#24 13.41 2026-10-26T06:36:33.910Z  INFO 65 --- [repair-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 61 ms. Found 1 JPA repository interface.
+#24 13.71 Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+#24 14.07 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+#24 14.12 WARNING: A Java agent has been loaded dynamically (/root/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.8/byte-buddy-agent-1.17.8.jar)
+#24 14.12 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+#24 14.12 WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+#24 14.12 WARNING: Dynamic loading of agents will be disallowed by default in a future release
+#24 15.57 2026-10-26T06:36:36.124Z  INFO 65 --- [repair-service] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+#24 15.67 2026-10-26T06:36:36.199Z  INFO 65 --- [repair-service] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.24.Final
+#24 16.19 2026-10-26T06:36:36.713Z  INFO 65 --- [repair-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+#24 16.28 2026-10-26T06:36:36.767Z  INFO 65 --- [repair-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+#24 16.60 2026-10-26T06:36:37.088Z  INFO 65 --- [repair-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:repair_db user=SA
+#24 16.60 2026-10-26T06:36:37.091Z  INFO 65 --- [repair-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+#24 16.70 2026-10-26T06:36:37.225Z  INFO 65 --- [repair-service] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+#24 16.70 	Database JDBC URL [jdbc:h2:mem:repair_db]
+#24 16.70 	Database driver: H2 JDBC Driver
+#24 16.70 	Database dialect: H2Dialect
+#24 16.70 	Database version: 2.4.240
+#24 16.70 	Default catalog/schema: REPAIR_DB/PUBLIC
+#24 16.70 	Autocommit mode: undefined/unknown
+#24 16.70 	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+#24 16.70 	JDBC fetch size: 100
+#24 16.70 	Pool: DataSourceConnectionProvider
+#24 16.70 	Minimum pool size: undefined/unknown
+#24 16.70 	Maximum pool size: undefined/unknown
+#24 17.92 2026-10-26T06:36:38.458Z  INFO 65 --- [repair-service] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+#24 18.03 2026-10-26T06:36:38.527Z  INFO 65 --- [repair-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+#24 18.13 2026-10-26T06:36:38.661Z  INFO 65 --- [repair-service] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+#24 19.46 2026-10-26T06:36:40.030Z  INFO 65 --- [repair-service] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+#24 19.68 2026-10-26T06:36:40.191Z  INFO 65 --- [repair-service] [           main] com.zjgsu.hly.RepairTests                : Started RepairTests in 8.483 seconds (process running for 10.367)
+#24 21.11 [INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.57 s -- in com.zjgsu.hly.RepairTests
+#24 21.12 [INFO] Running com.zjgsu.hly.DependencyHttpTests
+#24 21.81 [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.781 s -- in com.zjgsu.hly.DependencyHttpTests
+#24 22.19 [INFO]
+#24 22.19 [INFO] Results:
+#24 22.19 [INFO]
+#24 22.19 [INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0
+#24 22.19 [INFO]
+#24 22.20 [INFO]
+#24 22.20 [INFO] --- jar:3.4.2:jar (default-jar) @ repair-service ---
+#24 22.79 [INFO] Building jar: /workspace/target/repair-service-0.0.1-SNAPSHOT.jar
+#24 22.86 [INFO]
+#24 22.86 [INFO] --- spring-boot:4.0.8:repackage (repackage) @ repair-service ---
+#24 23.78 [INFO] Replacing main artifact /workspace/target/repair-service-0.0.1-SNAPSHOT.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+#24 23.78 [INFO] The original artifact has been renamed to /workspace/target/repair-service-0.0.1-SNAPSHOT.jar.original
+#24 23.78 [INFO] ------------------------------------------------------------------------
+#24 23.78 [INFO] BUILD SUCCESS
+#24 23.78 [INFO] ------------------------------------------------------------------------
+#24 23.78 [INFO] Total time:  20.089 s
+#24 23.78 [INFO] Finished at: 2026-10-26T06:36:44Z
+#24 23.78 [INFO] ------------------------------------------------------------------------
+#24 DONE 24.0s
+
+#25 [technician-service build 5/5] RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -B -ntp verify
+#25 ...
+
+#26 [repair-service stage-1 3/3] COPY --from=build --chown=10001:10001 /workspace/target/repair-service-0.0.1-SNAPSHOT.jar /app/app.jar
+#26 DONE 0.2s
+
+#23 [user-service build 5/5] RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -B -ntp verify
+#23 ...
+
+#27 [repair-service] exporting to image
+#27 exporting layers
+#27 exporting layers 3.8s done
+#27 exporting manifest sha256:9b9bb3ba6d7e32197aa82cdc0355680787eef5a73545f6ac1c738bf65e0f23a7
+#27 exporting manifest sha256:9b9bb3ba6d7e32197aa82cdc0355680787eef5a73545f6ac1c738bf65e0f23a7 0.0s done
+#27 exporting config sha256:a551000a18dfb1ab72c33dc944e2305aa5730ac86d742353771c5da5243d0612 0.0s done
+#27 exporting attestation manifest sha256:80627f9c9a24bf5d59adfc68913448e8fcbf5cf15a06738192f945780ff3a4cc 0.0s done
+#27 exporting manifest list sha256:6250aa65eafc06a512ab7c2f351c93fb797c25bc53d2d3419cc64d7bbcf90204 done
+#27 naming to docker.io/community-repair/repair-service:week06 done
+#27 unpacking to docker.io/community-repair/repair-service:week06
+#27 unpacking to docker.io/community-repair/repair-service:week06 0.6s done
+#27 DONE 4.5s
+
+#23 [user-service build 5/5] RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -B -ntp verify
+#23 ...
+
+#28 [repair-service] resolving provenance for metadata file
+#28 DONE 0.0s
+
+#23 [user-service build 5/5] RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -B -ntp verify
+#23 29.44 [INFO] Scanning for projects...
+#23 29.84 [INFO]
+#23 29.84 [INFO] ---------------------< com.zjgsu.hly:user-service >---------------------
+#23 29.84 [INFO] Building user-service 0.0.1-SNAPSHOT
+#23 29.84 [INFO]   from pom.xml
+#23 29.84 [INFO] --------------------------------[ jar ]---------------------------------
+#23 30.93 [INFO]
+#23 30.93 [INFO] --- resources:3.3.1:resources (default-resources) @ user-service ---
+#23 31.27 [INFO] Copying 1 resource from src/main/resources to target/classes
+#23 31.29 [INFO] Copying 0 resource from src/main/resources to target/classes
+#23 31.29 [INFO]
+#23 31.29 [INFO] --- compiler:3.14.1:compile (default-compile) @ user-service ---
+#23 31.59 [INFO] Recompiling the module because of changed source code.
+#23 31.62 [INFO] Compiling 8 source files with javac [debug parameters release 25] to target/classes
+#23 33.50 [INFO]
+#23 33.50 [INFO] --- resources:3.3.1:testResources (default-testResources) @ user-service ---
+#23 33.51 [INFO] Copying 1 resource from src/test/resources to target/test-classes
+#23 33.52 [INFO]
+#23 33.52 [INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ user-service ---
+#23 33.53 [INFO] Recompiling the module because of changed dependency.
+#23 33.53 [INFO] Compiling 1 source file with javac [debug parameters release 25] to target/test-classes
+#23 34.19 [INFO]
+#23 34.19 [INFO] --- surefire:3.5.6:test (default-test) @ user-service ---
+#23 34.56 [INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+#23 34.71 [INFO]
+#23 34.71 [INFO] -------------------------------------------------------
+#23 34.71 [INFO]  T E S T S
+#23 34.71 [INFO] -------------------------------------------------------
+#23 36.34 [INFO] Running com.zjgsu.hly.ResidentTests
+#23 36.64 06:36:57.169 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.zjgsu.hly.ResidentTests]: ResidentTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#23 36.83 06:36:57.346 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.zjgsu.hly.UserApplication for test class com.zjgsu.hly.ResidentTests
+#23 36.93 06:36:57.480 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.zjgsu.hly.ResidentTests]: ResidentTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#23 36.93 06:36:57.486 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.zjgsu.hly.UserApplication for test class com.zjgsu.hly.ResidentTests
+#23 37.67
+#23 37.67   .   ____          _            __ _ _
+#23 37.67  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+#23 37.67 ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+#23 37.67  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+#23 37.67   '  |____| .__|_| |_|_| |_\__, | / / / /
+#23 37.67  =========|_|==============|___/=/_/_/_/
+#23 37.67
+#23 37.67  :: Spring Boot ::                (v4.0.8)
+#23 37.67
+#23 37.67 2026-10-26T06:36:58.255Z  INFO 65 --- [user-service] [           main] com.zjgsu.hly.ResidentTests              : Starting ResidentTests using Java 25.0.4.1 with PID 65 (started by root in /workspace)
+#23 37.68 2026-10-26T06:36:58.257Z  INFO 65 --- [user-service] [           main] com.zjgsu.hly.ResidentTests              : The following 1 profile is active: "test"
+#23 39.43 2026-10-26T06:36:59.959Z  INFO 65 --- [user-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+#23 39.54 2026-10-26T06:37:00.048Z  INFO 65 --- [user-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 74 ms. Found 1 JPA repository interface.
+#23 40.47 2026-10-26T06:37:00.974Z  INFO 65 --- [user-service] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+#23 40.57 2026-10-26T06:37:01.077Z  INFO 65 --- [user-service] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.24.Final
+#23 41.29 2026-10-26T06:37:01.798Z  INFO 65 --- [user-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+#23 41.29 2026-10-26T06:37:01.861Z  INFO 65 --- [user-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+#23 41.59 2026-10-26T06:37:02.089Z  INFO 65 --- [user-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:user_db user=SA
+#23 41.59 2026-10-26T06:37:02.091Z  INFO 65 --- [user-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+#23 41.59 2026-10-26T06:37:02.186Z  INFO 65 --- [user-service] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+#23 41.59 	Database JDBC URL [jdbc:h2:mem:user_db]
+#23 41.59 	Database driver: H2 JDBC Driver
+#23 41.59 	Database dialect: H2Dialect
+#23 41.59 	Database version: 2.4.240
+#23 41.59 	Default catalog/schema: USER_DB/PUBLIC
+#23 41.59 	Autocommit mode: undefined/unknown
+#23 41.59 	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+#23 41.59 	JDBC fetch size: 100
+#23 41.59 	Pool: DataSourceConnectionProvider
+#23 41.59 	Minimum pool size: undefined/unknown
+#23 41.59 	Maximum pool size: undefined/unknown
+#23 42.85 2026-10-26T06:37:03.332Z  INFO 65 --- [user-service] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+#23 42.85 2026-10-26T06:37:03.393Z  INFO 65 --- [user-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+#23 42.96 2026-10-26T06:37:03.502Z  INFO 65 --- [user-service] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+#23 44.17 2026-10-26T06:37:04.745Z  INFO 65 --- [user-service] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+#23 44.27 2026-10-26T06:37:04.859Z  INFO 65 --- [user-service] [           main] com.zjgsu.hly.ResidentTests              : Started ResidentTests in 7.262 seconds (process running for 9.396)
+#23 44.60 Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+#23 45.10 WARNING: A Java agent has been loaded dynamically (/root/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.8/byte-buddy-agent-1.17.8.jar)
+#23 45.10 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+#23 45.10 WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+#23 45.10 WARNING: Dynamic loading of agents will be disallowed by default in a future release
+#23 45.13 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+#23 46.28 [INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.876 s -- in com.zjgsu.hly.ResidentTests
+#23 46.38 [INFO]
+#23 46.38 [INFO] Results:
+#23 46.38 [INFO]
+#23 46.38 [INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+#23 46.38 [INFO]
+#23 46.39 [INFO]
+#23 46.39 [INFO] --- jar:3.4.2:jar (default-jar) @ user-service ---
+#23 46.95 [INFO] Building jar: /workspace/target/user-service-0.0.1-SNAPSHOT.jar
+#23 47.02 [INFO]
+#23 47.02 [INFO] --- spring-boot:4.0.8:repackage (repackage) @ user-service ---
+#23 48.09 [INFO] Replacing main artifact /workspace/target/user-service-0.0.1-SNAPSHOT.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+#23 48.10 [INFO] The original artifact has been renamed to /workspace/target/user-service-0.0.1-SNAPSHOT.jar.original
+#23 48.10 [INFO] ------------------------------------------------------------------------
+#23 48.10 [INFO] BUILD SUCCESS
+#23 48.10 [INFO] ------------------------------------------------------------------------
+#23 48.10 [INFO] Total time:  18.731 s
+#23 48.11 [INFO] Finished at: 2026-10-26T06:37:08Z
+#23 48.11 [INFO] ------------------------------------------------------------------------
+#23 DONE 48.5s
+
+#25 [technician-service build 5/5] RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -B -ntp verify
+#25 ...
+
+#29 [user-service stage-1 3/3] COPY --from=build --chown=10001:10001 /workspace/target/user-service-0.0.1-SNAPSHOT.jar /app/app.jar
+#29 DONE 0.2s
+
+#25 [technician-service build 5/5] RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -B -ntp verify
+#25 ...
+
+#30 [user-service] exporting to image
+#30 exporting layers
+#30 exporting layers 4.3s done
+#30 exporting manifest sha256:fb7905c8675e0a11ccef8ee5978d447f87ce88c33204f7b8fd79ce058051f9f0
+#30 exporting manifest sha256:fb7905c8675e0a11ccef8ee5978d447f87ce88c33204f7b8fd79ce058051f9f0 0.0s done
+#30 exporting config sha256:fb37c2c844bc75ea4fc8aa6c6628869fdf5af04787bb67bd0c58110a96dcfec7 done
+#30 exporting attestation manifest sha256:c93f67d609aa62332f272274a9be57a644fd29711b33cfc86b5a490fc11764d2 done
+#30 exporting manifest list sha256:292dc8ff1e093e559a2e8a9e11b0db414af97a27927f5abc76cd3a407d1b6e39 0.0s done
+#30 naming to docker.io/community-repair/user-service:week06 done
+#30 unpacking to docker.io/community-repair/user-service:week06
+#30 unpacking to docker.io/community-repair/user-service:week06 0.8s done
+#30 DONE 5.2s
+
+#25 [technician-service build 5/5] RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -B -ntp verify
+#25 ...
+
+#31 [user-service] resolving provenance for metadata file
+#31 DONE 0.0s
+
+#25 [technician-service build 5/5] RUN --mount=type=cache,target=/root/.m2,sharing=locked mvn -B -ntp verify
+#25 54.86 [INFO] Scanning for projects...
+#25 55.46 [INFO]
+#25 55.46 [INFO] ------------------< com.zjgsu.hly:technician-service >------------------
+#25 55.46 [INFO] Building technician-service 0.0.1-SNAPSHOT
+#25 55.46 [INFO]   from pom.xml
+#25 55.46 [INFO] --------------------------------[ jar ]---------------------------------
+#25 56.60 [INFO]
+#25 56.60 [INFO] --- resources:3.3.1:resources (default-resources) @ technician-service ---
+#25 56.92 [INFO] Copying 1 resource from src/main/resources to target/classes
+#25 56.96 [INFO] Copying 0 resource from src/main/resources to target/classes
+#25 56.96 [INFO]
+#25 56.96 [INFO] --- compiler:3.14.1:compile (default-compile) @ technician-service ---
+#25 57.19 [INFO] Recompiling the module because of changed source code.
+#25 57.22 [INFO] Compiling 8 source files with javac [debug parameters release 25] to target/classes
+#25 58.91 [INFO]
+#25 58.91 [INFO] --- resources:3.3.1:testResources (default-testResources) @ technician-service ---
+#25 58.93 [INFO] Copying 1 resource from src/test/resources to target/test-classes
+#25 58.93 [INFO]
+#25 58.93 [INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ technician-service ---
+#25 58.95 [INFO] Recompiling the module because of changed dependency.
+#25 58.95 [INFO] Compiling 1 source file with javac [debug parameters release 25] to target/test-classes
+#25 59.65 [INFO]
+#25 59.65 [INFO] --- surefire:3.5.6:test (default-test) @ technician-service ---
+#25 60.06 [INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+#25 60.18 [INFO]
+#25 60.19 [INFO] -------------------------------------------------------
+#25 60.19 [INFO]  T E S T S
+#25 60.19 [INFO] -------------------------------------------------------
+#25 61.93 [INFO] Running com.zjgsu.hly.TechnicianTests
+#25 62.27 06:37:22.798 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.zjgsu.hly.TechnicianTests]: TechnicianTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#25 62.46 06:37:22.951 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.zjgsu.hly.TechnicianApplication for test class com.zjgsu.hly.TechnicianTests
+#25 62.57 06:37:23.083 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.zjgsu.hly.TechnicianTests]: TechnicianTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+#25 62.57 06:37:23.087 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.zjgsu.hly.TechnicianApplication for test class com.zjgsu.hly.TechnicianTests
+#25 63.08
+#25 63.08   .   ____          _            __ _ _
+#25 63.08  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+#25 63.08 ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+#25 63.08  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+#25 63.08   '  |____| .__|_| |_|_| |_\__, | / / / /
+#25 63.08  =========|_|==============|___/=/_/_/_/
+#25 63.08
+#25 63.08  :: Spring Boot ::                (v4.0.8)
+#25 63.08
+#25 63.18 2026-10-26T06:37:23.704Z  INFO 65 --- [technician-service] [           main] com.zjgsu.hly.TechnicianTests            : Starting TechnicianTests using Java 25.0.4.1 with PID 65 (started by root in /workspace)
+#25 63.18 2026-10-26T06:37:23.706Z  INFO 65 --- [technician-service] [           main] com.zjgsu.hly.TechnicianTests            : The following 1 profile is active: "test"
+#25 65.14 2026-10-26T06:37:25.654Z  INFO 65 --- [technician-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+#25 65.25 2026-10-26T06:37:25.778Z  INFO 65 --- [technician-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 101 ms. Found 1 JPA repository interface.
+#25 66.28 2026-10-26T06:37:26.824Z  INFO 65 --- [technician-service] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+#25 66.49 2026-10-26T06:37:27.021Z  INFO 65 --- [technician-service] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.24.Final
+#25 67.30 2026-10-26T06:37:27.839Z  INFO 65 --- [technician-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+#25 67.40 2026-10-26T06:37:27.877Z  INFO 65 --- [technician-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+#25 67.60 2026-10-26T06:37:28.155Z  INFO 65 --- [technician-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:technician_db user=SA
+#25 67.60 2026-10-26T06:37:28.168Z  INFO 65 --- [technician-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+#25 67.71 2026-10-26T06:37:28.259Z  INFO 65 --- [technician-service] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+#25 67.71 	Database JDBC URL [jdbc:h2:mem:technician_db]
+#25 67.71 	Database driver: H2 JDBC Driver
+#25 67.71 	Database dialect: H2Dialect
+#25 67.71 	Database version: 2.4.240
+#25 67.71 	Default catalog/schema: TECHNICIAN_DB/PUBLIC
+#25 67.71 	Autocommit mode: undefined/unknown
+#25 67.71 	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+#25 67.71 	JDBC fetch size: 100
+#25 67.71 	Pool: DataSourceConnectionProvider
+#25 67.71 	Minimum pool size: undefined/unknown
+#25 67.71 	Maximum pool size: undefined/unknown
+#25 69.04 2026-10-26T06:37:29.572Z  INFO 65 --- [technician-service] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+#25 69.15 2026-10-26T06:37:29.634Z  INFO 65 --- [technician-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+#25 69.25 2026-10-26T06:37:29.809Z  INFO 65 --- [technician-service] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+#25 71.10 2026-10-26T06:37:31.602Z  INFO 65 --- [technician-service] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+#25 71.21 2026-10-26T06:37:31.748Z  INFO 65 --- [technician-service] [           main] com.zjgsu.hly.TechnicianTests            : Started TechnicianTests in 8.556 seconds (process running for 10.816)
+#25 71.52 Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+#25 72.02 WARNING: A Java agent has been loaded dynamically (/root/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.8/byte-buddy-agent-1.17.8.jar)
+#25 72.02 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+#25 72.02 WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+#25 72.02 WARNING: Dynamic loading of agents will be disallowed by default in a future release
+#25 72.06 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+#25 73.28 [INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.26 s -- in com.zjgsu.hly.TechnicianTests
+#25 73.39 [INFO]
+#25 73.39 [INFO] Results:
+#25 73.39 [INFO]
+#25 73.39 [INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+#25 73.39 [INFO]
+#25 73.40 [INFO]
+#25 73.41 [INFO] --- jar:3.4.2:jar (default-jar) @ technician-service ---
+#25 73.85 [INFO] Building jar: /workspace/target/technician-service-0.0.1-SNAPSHOT.jar
+#25 73.91 [INFO]
+#25 73.91 [INFO] --- spring-boot:4.0.8:repackage (repackage) @ technician-service ---
+#25 74.89 [INFO] Replacing main artifact /workspace/target/technician-service-0.0.1-SNAPSHOT.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+#25 74.89 [INFO] The original artifact has been renamed to /workspace/target/technician-service-0.0.1-SNAPSHOT.jar.original
+#25 74.89 [INFO] ------------------------------------------------------------------------
+#25 74.89 [INFO] BUILD SUCCESS
+#25 74.89 [INFO] ------------------------------------------------------------------------
+#25 74.90 [INFO] Total time:  20.118 s
+#25 74.90 [INFO] Finished at: 2026-10-26T06:37:35Z
+#25 74.90 [INFO] ------------------------------------------------------------------------
+#25 DONE 75.2s
+
+#32 [technician-service stage-1 3/3] COPY --from=build --chown=10001:10001 /workspace/target/technician-service-0.0.1-SNAPSHOT.jar /app/app.jar
+#32 DONE 0.2s
+
+#33 [technician-service] exporting to image
+#33 exporting layers
+#33 exporting layers 3.5s done
+#33 exporting manifest sha256:987ee41ceef0939e794f2b022fa87c66eb01ea01c76eeb97f2bf89b1b532f3b5 0.0s done
+#33 exporting config sha256:a6bbd6ef9b9b0864afa750c396346c13c9c0c6f08e9b28a43577a960139c094c 0.0s done
+#33 exporting attestation manifest sha256:04c80051c06b7cc1d673a089bc36542e68e0047e1e5b4d297efe0daa8feb639f 0.0s done
+#33 exporting manifest list sha256:1c01130b52254ba24ba3571536e86df69154ba28eeddcc6efb71f360944ede09
+#33 exporting manifest list sha256:1c01130b52254ba24ba3571536e86df69154ba28eeddcc6efb71f360944ede09 done
+#33 naming to docker.io/community-repair/technician-service:week06 done
+#33 unpacking to docker.io/community-repair/technician-service:week06
+#33 unpacking to docker.io/community-repair/technician-service:week06 1.2s done
+#33 DONE 4.8s
+
+#34 [technician-service] resolving provenance for metadata file
+#34 DONE 0.0s
+ Image community-repair/user-service:week06 Built
+ Image community-repair/repair-service:week06 Built
+ Image community-repair/technician-service:week06 Built

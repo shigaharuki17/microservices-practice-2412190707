@@ -1,0 +1,21 @@
+Service: user-service
+-------------------------------------------------------------------------------
+Test set: com.zjgsu.hly.ResidentTests
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.763 s -- in com.zjgsu.hly.ResidentTests
+
+Service: technician-service
+-------------------------------------------------------------------------------
+Test set: com.zjgsu.hly.TechnicianTests
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.39 s -- in com.zjgsu.hly.TechnicianTests
+
+Service: repair-service
+-------------------------------------------------------------------------------
+Test set: com.zjgsu.hly.DependencyHttpTests
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.893 s -- in com.zjgsu.hly.DependencyHttpTests
+-------------------------------------------------------------------------------
+Test set: com.zjgsu.hly.RepairTests
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.673 s -- in com.zjgsu.hly.RepairTests

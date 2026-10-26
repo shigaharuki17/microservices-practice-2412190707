@@ -1,10 +1,33 @@
 # 社区报修与上门维修服务平台
 
-> 微服务开发与实践｜霍利屹｜2412190707｜第五周：Docker 容器化与持久化验证
+> 微服务开发与实践｜霍利屹｜2412190707｜第六周：微服务拆分与 HTTP 协作
 
 本项目解决社区报修信息分散、派单不及时和进度难追踪的问题。当前在原 `monolith/` 中实现“住户提交报修 → 物业审核 → 按技能派单 → 维修人员确认接单”的完整受理流程，并使用 MySQL 持久化。Java 基础包保持 `com.zjgsu.hly`，新增分层代码放入其子包。
 
-## 第五周：容器运行（推荐）
+## 第六周：微服务运行
+
+原 monolith 保留，services 新增 user-service（住户，8091）、technician-service（人员，8092）和 repair-service（工单，8093）。每个服务有独立数据库和账号，跨服务只保存 ID，通过 RestTemplate 查询依赖信息。
+
+```bash
+cp .env.example .env
+# 编辑密码，本机已有配置时不要覆盖 .env。
+sudo docker compose up -d --build
+sudo docker compose ps
+bash scripts/smoke-test.sh
+sudo bash scripts/smoke-test.sh --with-failure
+```
+
+三个健康地址分别为 `http://localhost:8091/actuator/health`、`http://localhost:8092/actuator/health`、`http://localhost:8093/actuator/health`。Windows 访问虚拟机时将 localhost 替换为 Ubuntu IP。
+
+进入各 services/<服务名> 目录执行 `./mvnw test`（Windows 用 `.\mvnw.cmd test`），测试用 H2，无需 MySQL。镜像构建自动执行 verify。宿主机独立运行时设置 DB_URL、DB_USERNAME、DB_PASSWORD，再执行 `./mvnw spring-boot:run`。
+
+工单服务 application.yml 中配置 USER_SERVICE_URL、TECHNICIAN_SERVICE_URL、HTTP_CONNECT_TIMEOUT_MS、HTTP_READ_TIMEOUT_MS；Compose 内地址覆盖为服务名。资源缺失返回 404，不可用或超时返回 503，状态/技能冲突返回 409，校验成功前不写本地工单。
+
+停止 `sudo docker compose stop`，恢复 `sudo docker compose start`。`down` 保留数据卷，不要加 -v。旧单体使用 `sudo docker compose -f compose.monolith.yaml up -d --build`。
+
+[服务设计与架构图](docs/microservices-design.md)｜[第六周命令、真实结果和作业文本](docs/homework/week-06/index.md)。本机共享目录须先同步到 Ubuntu 本地路径，步骤见第六周记录。
+
+## 第五周：单体容器运行（历史版本）
 
 本周使用 Docker 将现有应用和 MySQL 8.4.11 一起启动，无需在宿主机安装 Java 或 Maven。多阶段构建自动编译并运行测试，运行镜像仅包含 JRE 与应用 JAR。
 
@@ -14,9 +37,9 @@
 cp .env.example .env
 # 编辑 .env，设置 MYSQL_PASSWORD 和 MYSQL_ROOT_PASSWORD
 sudo docker build -t community-repair:week05 ./monolith
-sudo docker compose up -d --build
-sudo docker compose ps
-sudo docker compose logs --tail=50 app
+sudo docker compose -f compose.monolith.yaml up -d --build
+sudo docker compose -f compose.monolith.yaml ps
+sudo docker compose -f compose.monolith.yaml logs --tail=50 app
 ```
 
 应用通过数据库服务名 `mysql` 连接，等待数据库健康后启动；真实 `.env` 已忽略，模板 `.env.example` 可提交。命名卷保留 MySQL 数据，容器内部应用端口 8080，宿主机映射 8081（可通过 APP_PORT 调整）。
@@ -31,14 +54,14 @@ Windows 访问 VMware 中的应用时使用 `http://192.168.158.128:8081`，不�
 
 ```bash
 python3 scripts/verify-container.py before
-sudo docker compose down
-sudo docker compose up -d
+sudo docker compose -f compose.monolith.yaml down
+sudo docker compose -f compose.monolith.yaml up -d
 # 等待健康接口返回 UP
 python3 scripts/verify-container.py after
-sudo docker compose stop
+sudo docker compose -f compose.monolith.yaml stop
 ```
 
-`down` 删除容器但保留数据卷；不要加 `-v`。`stop` 只停止服务，恢复使用 `sudo docker compose start`。修改 .env 中的数据库密码不会自动修改已有数据卷内的账号密码。
+`down` 删除容器但保留数据卷；不要加 `-v`。`stop` 只停止服务，恢复使用 `sudo docker compose -f compose.monolith.yaml start`。修改 .env 中的数据库密码不会自动修改已有数据卷内的账号密码。
 
 本机共享挂载需先同步到 `~/community-repair-week05` 再构建，具体命令、实际验证结果和截图见 [第五周作业记录](docs/homework/week-05/index.md)。以下本地 Java/MySQL 启动说明仍供第四周开发使用。
 
@@ -184,7 +207,7 @@ Windows PowerShell 使用 `.\mvnw.cmd test`。测试显式激活 `test` profile�
 - 登录认证、角色授权、住户身份校验和房屋管理；当前角色由接口调用行为模拟，不能用于真实多用户环境。
 - 上门时间预约与冲突检测、实际维修、报价、库存、支付、验收、评价、返修。
 - 原工单重提、重新派单、人员修改/删除、分页查询和完整操作审计。
-- 微服务拆分、消息队列、分布式事务、完整业务监控与生产部署；应用和 MySQL 的基础容器部署已在第五周完成。
+- 统一网关、消息队列、分布式事务、自动补偿、完整业务监控与生产部署；第六周已完成三个服务拆分、HTTP 协作和本地容器编排。
 
 数据库模型、Service、Repository 和业务 API 已在第四周实现，不再属于“仅规划”。以下完整产品设计仍包含尚未实现的后续目标。
 

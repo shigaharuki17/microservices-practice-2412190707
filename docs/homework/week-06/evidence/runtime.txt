@@ -1,0 +1,29 @@
+$ docker compose ps --format table
+SERVICE              STATE     STATUS
+repair-db            running   Up 4 minutes (healthy)
+repair-service       running   Up 3 minutes
+technician-db        running   Up 4 minutes (healthy)
+technician-service   running   Up 3 minutes
+user-db              running   Up 4 minutes (healthy)
+user-service         running   Up About a minute
+
+Database ownership: user-db (application account)
+user_db	user_app@%
+residents
+GRANT USAGE ON *.* TO `user_app`@`%`
+GRANT ALL PRIVILEGES ON `user\\_db`.* TO `user_app`@`%`
+
+Database ownership: technician-db (application account)
+technician_db	technician_app@%
+technicians
+GRANT USAGE ON *.* TO `technician_app`@`%`
+GRANT ALL PRIVILEGES ON `technician\\_db`.* TO `technician_app`@`%`
+
+Database ownership: repair-db (application account)
+repair_db	repair_app@%
+repair_orders
+GRANT USAGE ON *.* TO `repair_app`@`%`
+GRANT ALL PRIVILEGES ON `repair\\_db`.* TO `repair_app`@`%`
+
+Foreign-key count in repair_db:
+0

@@ -1,0 +1,30 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>容器编排与数据库隔离验证</title><style>*{box-sizing:border-box}body{margin:0;padding:36px 44px;background:#edf2f7;color:#152235;font:17px "Microsoft YaHei",Arial,sans-serif}header{border-left:7px solid #187a73;padding:2px 0 2px 20px;margin-bottom:22px}h1{font-size:31px;margin:0 0 9px}h2{font-size:21px;margin:0 0 14px}p{line-height:1.7;margin:8px 0}small{font-size:13px;color:#526478}section{padding:22px;background:white;border:1px solid #d8e2ec;border-radius:12px;margin:16px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.grid section{margin:0}table{width:100%;border-collapse:collapse;font-size:16px}th,td{text-align:left;padding:11px;border-bottom:1px solid #dbe4ed;vertical-align:top}th{background:#edf4f8}pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font:15px Consolas,"Microsoft YaHei",monospace;margin:10px 0 0;color:#dceaf6;background:#172536;padding:17px;border-radius:8px}code{font-family:Consolas,monospace}.ok{color:#10745f;font-weight:bold}.tag{display:inline-block;background:#dff3ec;color:#116651;border-radius:7px;padding:6px 12px}.flow{display:flex;align-items:center;justify-content:space-around;text-align:center;margin:18px 0}.box{background:#e6f1fa;border:1px solid #a9c6dc;border-radius:9px;padding:15px 22px}.arrow{font-size:26px;color:#347b85}.muted{color:#526478}footer{font-size:13px;color:#526478;padding-top:10px}</style><header><h1>容器编排与数据库隔离验证</h1><small>来源：docs/homework/week-06/evidence/runtime.txt</small></header><section><h2>三个服务和独立 MySQL 8.4.11</h2><pre>$ docker compose ps --format table
+SERVICE              STATE     STATUS
+repair-db            running   Up 4 minutes (healthy)
+repair-service       running   Up 3 minutes
+technician-db        running   Up 4 minutes (healthy)
+technician-service   running   Up 3 minutes
+user-db              running   Up 4 minutes (healthy)
+user-service         running   Up About a minute
+
+Database ownership: user-db (application account)
+user_db	user_app@%
+residents
+GRANT USAGE ON *.* TO `user_app`@`%`
+GRANT ALL PRIVILEGES ON `user\\_db`.* TO `user_app`@`%`
+
+Database ownership: technician-db (application account)
+technician_db	technician_app@%
+technicians
+GRANT USAGE ON *.* TO `technician_app`@`%`
+GRANT ALL PRIVILEGES ON `technician\\_db`.* TO `technician_app`@`%`
+
+Database ownership: repair-db (application account)
+repair_db	repair_app@%
+repair_orders
+GRANT USAGE ON *.* TO `repair_app`@`%`
+GRANT ALL PRIVILEGES ON `repair\\_db`.* TO `repair_app`@`%`
+
+Foreign-key count in repair_db:
+0
+</pre></section><footer>社区报修与上门维修服务平台 · 第六周 · 2026-10-26<br>本页是项目源码/实际验证记录的证据报告。后台浏览器截图，未模拟 IDE 或终端画面；原始文件可交叉核对。</footer></html>

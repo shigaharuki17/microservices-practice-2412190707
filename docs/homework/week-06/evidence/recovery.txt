@@ -1,0 +1,8 @@
+GET http://localhost:8091/actuator/health
+HTTP 200
+{"groups": ["liveness", "readiness"], "status": "UP"}
+GET http://localhost:8093/api/repair-orders/1
+HTTP 200
+{"category": "PLUMBING", "contactPhone": "13905100680", "createdAt": "2026-10-26T06:41:03.794527", "description": "Week06 leaking pipe", "id": 1, "location": "Building 6 Room 601", "residentId": 1, "residentName": "Week06 Resident", "reviewNote": "Approved", "status": "ACCEPTED", "technicianId": 1, "updatedAt": "2026-10-26T06:41:04.267114", "version": 3}
+RECOVERY=PASS; existing order remains ACCEPTED
+SMOKE_PHASE_RECOVERY=PASS
