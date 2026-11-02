@@ -1,0 +1,65 @@
+[
+  {
+    "service": "user",
+    "method": "GET",
+    "url": "http://localhost:8091/actuator/health",
+    "status": 200,
+    "request": null,
+    "response": {
+      "groups": [
+        "liveness",
+        "readiness"
+      ],
+      "status": "UP"
+    }
+  },
+  {
+    "service": "repair",
+    "method": "GET",
+    "url": "http://localhost:8093/api/repair-orders/3",
+    "status": 200,
+    "request": null,
+    "response": {
+      "category": "PLUMBING",
+      "contactPhone": "13983651152",
+      "createdAt": "2026-11-02T06:25:39.594674",
+      "description": "Week07 leaking pipe",
+      "id": 3,
+      "location": "Building 7 Room 701",
+      "residentId": 2,
+      "residentName": "Week07 Resident",
+      "reviewNote": "Approved",
+      "status": "ACCEPTED",
+      "technicianId": 3,
+      "updatedAt": "2026-11-02T06:25:40.44157",
+      "version": 3
+    }
+  },
+  {
+    "service": "repair",
+    "method": "POST",
+    "url": "http://localhost:8093/api/repair-orders",
+    "status": 201,
+    "request": {
+      "residentId": 2,
+      "location": "Building 7 Room 701",
+      "description": "Week07 fresh valid request after recovery",
+      "category": "PLUMBING"
+    },
+    "response": {
+      "category": "PLUMBING",
+      "contactPhone": "13983651152",
+      "createdAt": "2026-11-02T06:26:13.414690485",
+      "description": "Week07 fresh valid request after recovery",
+      "id": 5,
+      "location": "Building 7 Room 701",
+      "residentId": 2,
+      "residentName": "Week07 Resident",
+      "reviewNote": null,
+      "status": "SUBMITTED",
+      "technicianId": null,
+      "updatedAt": "2026-11-02T06:26:13.414690485",
+      "version": 0
+    }
+  }
+]

@@ -38,16 +38,29 @@ flowchart LR
 
 创建返回 201，查询及操作成功 200；输入错误 400，资源缺失 404，状态/技能冲突 409，依赖错误响应 502，连接失败/超时 503。错误时不得跳过校验写入工单。住户缺失、住户服务停止时，工单数量不变；技能不匹配时仍为 APPROVED，technicianId 为 null。
 
-## HTTP 配置
+## HTTP 与服务发现配置（第七周）
 
-按作业要求使用 RestTemplate。repair-service/application.yml 中的 dependencies.user-url、technician-url 分别由 USER_SERVICE_URL、TECHNICIAN_SERVICE_URL 覆盖。连接超时默认 2000ms，读取超时 3000ms，环境变量为 HTTP_CONNECT_TIMEOUT_MS、HTTP_READ_TIMEOUT_MS。
+使用 RestTemplate，保留连接 2000ms、读取 3000ms 超时（HTTP_CONNECT_TIMEOUT_MS、HTTP_READ_TIMEOUT_MS）。DependencyClient 每次 resident/technician 操作都调用 DiscoveryClient.getInstances，取当前实例 URI 拼接业务路径；不保留固定 endpoint，不使用普通 RestTemplate 的“服务名 URL”冒充服务发现。空实例或发现异常映射 503，HTTP 404 保留为业务资源不存在。
 
-Compose 内使用 http://user-service:8091 和 http://technician-service:8092，不使用 localhost 访问其他容器；宿主机单独启动时使用 localhost 默认值。应用启动等待各自数据库健康，smoke-test 检查所有应用健康。
+三个服务名称与上述映射表一致，通过 Nacos 3.2.4 注册到 public 命名空间和 PERSONAL_GROUP，与课堂 COURSE_GROUP 隔离。Compose 内 NACOS_SERVER_ADDR=nacos:8848，用户、密码、分组与命名空间由环境变量注入。公开模板仅占位，不提交真实 .env。测试 profile 禁用 Nacos，H2 与模拟 DiscoveryClient 独立验证。
+
+```mermaid
+flowchart LR
+    Repair[repair-service] -->|getInstances 每次重新查询| Nacos[Nacos 3.2.4 / PERSONAL_GROUP]
+    User[user-service] -->|注册实例| Nacos
+    Tech[technician-service] -->|注册实例| Nacos
+    Repair -->|注册实例| Nacos
+    Nacos -.->|当前实例 URI| Repair
+    Repair -->|HTTP /api/residents/id| User
+    Repair -->|HTTP /api/technicians/id| Tech
+```
 
 ## 一致性窗口和当前边界
 
 远端 GET 校验和本地提交不属于同一原子事务。远端查询成功后，资料可能变化，本地事务也可能失败；HTTP 200 不保证工单保存成功。当前远端调用都是 GET，因此不会出现远端新增写入残留，但存在校验与提交之间的时间窗口。未来增加远端扣款或名额占用时，会出现远端已写、本地失败，需要后续幂等、消息、Saga 或补偿设计。
 
-本周仅实现各自数据库、本地事务、基础 HTTP 和失败处理，不声称实现跨服务原子事务、自动补偿、消息、认证授权或生产级服务发现。旧单体数据不自动迁入新库，脚本每次创建自己的演示数据。
+本周仅实现各自数据库、本地事务、基础 HTTP 和失败处理，不声称实现跨服务原子事务、自动补偿、消息、认证授权或生产级高可用注册中心。旧单体数据不自动迁入新库，脚本每次创建自己的演示数据。
 
 参考：[Spring HTTP 客户端](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html)、[Compose 健康依赖](https://docs.docker.com/reference/compose-file/services/)。
+
+第七周验证见 [服务上下线记录](homework/week-07/index.md)。参考 [Nacos 接入](https://sca.aliyun.com/en/docs/2025.x/user-guide/nacos/quick-start/) 和 [Nacos 鉴权](https://nacos.io/en/docs/latest/manual/admin/auth/)。

@@ -1,0 +1,42 @@
+{
+  "8091": {
+    "statusCode": 200,
+    "body": {
+      "groups": [
+        "liveness",
+        "readiness"
+      ],
+      "status": "UP"
+    }
+  },
+  "8092": {
+    "statusCode": 200,
+    "body": {
+      "groups": [
+        "liveness",
+        "readiness"
+      ],
+      "status": "UP"
+    }
+  },
+  "8093": {
+    "statusCode": 200,
+    "body": {
+      "groups": [
+        "liveness",
+        "readiness"
+      ],
+      "status": "UP"
+    }
+  },
+  "order-3": {
+    "statusCode": 200,
+    "id": 3,
+    "status": "ACCEPTED"
+  },
+  "order-5": {
+    "statusCode": 200,
+    "id": 5,
+    "status": "SUBMITTED"
+  }
+}

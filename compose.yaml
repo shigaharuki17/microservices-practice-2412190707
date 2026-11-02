@@ -1,18 +1,52 @@
 name: community-repair-services
 services:
+  nacos:
+    image: nacos/nacos-server:v3.2.4
+    environment:
+      MODE: standalone
+      NACOS_AUTH_ENABLE: "true"
+      NACOS_AUTH_ADMIN_ENABLE: "true"
+      NACOS_AUTH_CONSOLE_ENABLE: "true"
+      NACOS_AUTH_TOKEN: ${NACOS_AUTH_TOKEN:?Set NACOS_AUTH_TOKEN in .env}
+      NACOS_AUTH_IDENTITY_KEY: ${NACOS_AUTH_IDENTITY_KEY:?Set NACOS_AUTH_IDENTITY_KEY in .env}
+      NACOS_AUTH_IDENTITY_VALUE: ${NACOS_AUTH_IDENTITY_VALUE:?Set NACOS_AUTH_IDENTITY_VALUE in .env}
+      JVM_XMS: 256m
+      JVM_XMX: 512m
+      JVM_XMN: 128m
+    ports:
+      - "${NACOS_BIND_HOST:-127.0.0.1}:${NACOS_CONSOLE_PORT:-18088}:8080"
+      - "${NACOS_BIND_HOST:-127.0.0.1}:${NACOS_SERVER_PORT:-8849}:8848"
+      - "${NACOS_BIND_HOST:-127.0.0.1}:${NACOS_GRPC_PORT:-9849}:9848"
+    volumes:
+      - nacos-data:/home/nacos/data
+      - nacos-logs:/home/nacos/logs
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 45s
+    restart: unless-stopped
   user-service:
-    image: community-repair/user-service:week06
+    image: community-repair/user-service:week07
     build:
       context: ./services/user-service
     ports:
       - "${USER_PORT:-8091}:8091"
     environment:
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_USERNAME: ${NACOS_USERNAME:-nacos}
+      NACOS_PASSWORD: ${NACOS_PASSWORD:?Set NACOS_PASSWORD in .env}
+      NACOS_GROUP: ${NACOS_GROUP:-PERSONAL_GROUP}
+      NACOS_NAMESPACE: ${NACOS_NAMESPACE:-}
       SERVER_PORT: "8091"
       DB_URL: "jdbc:mysql://user-db:3306/user_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8"
       DB_USERNAME: user_app
       DB_PASSWORD: "${USER_DB_PASSWORD:?Set USER_DB_PASSWORD in .env}"
       JAVA_TOOL_OPTIONS: "-Xmx192m -XX:MaxMetaspaceSize=192m -XX:ActiveProcessorCount=2"
     depends_on:
+      nacos:
+        condition: service_healthy
       user-db:
         condition: service_healthy
     restart: unless-stopped
@@ -38,18 +72,25 @@ services:
       start_period: 40s
     restart: unless-stopped
   technician-service:
-    image: community-repair/technician-service:week06
+    image: community-repair/technician-service:week07
     build:
       context: ./services/technician-service
     ports:
       - "${TECHNICIAN_PORT:-8092}:8092"
     environment:
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_USERNAME: ${NACOS_USERNAME:-nacos}
+      NACOS_PASSWORD: ${NACOS_PASSWORD:?Set NACOS_PASSWORD in .env}
+      NACOS_GROUP: ${NACOS_GROUP:-PERSONAL_GROUP}
+      NACOS_NAMESPACE: ${NACOS_NAMESPACE:-}
       SERVER_PORT: "8092"
       DB_URL: "jdbc:mysql://technician-db:3306/technician_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8"
       DB_USERNAME: technician_app
       DB_PASSWORD: "${TECHNICIAN_DB_PASSWORD:?Set TECHNICIAN_DB_PASSWORD in .env}"
       JAVA_TOOL_OPTIONS: "-Xmx192m -XX:MaxMetaspaceSize=192m -XX:ActiveProcessorCount=2"
     depends_on:
+      nacos:
+        condition: service_healthy
       technician-db:
         condition: service_healthy
     restart: unless-stopped
@@ -75,22 +116,27 @@ services:
       start_period: 40s
     restart: unless-stopped
   repair-service:
-    image: community-repair/repair-service:week06
+    image: community-repair/repair-service:week07
     build:
       context: ./services/repair-service
     ports:
       - "${REPAIR_PORT:-8093}:8093"
     environment:
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_USERNAME: ${NACOS_USERNAME:-nacos}
+      NACOS_PASSWORD: ${NACOS_PASSWORD:?Set NACOS_PASSWORD in .env}
+      NACOS_GROUP: ${NACOS_GROUP:-PERSONAL_GROUP}
+      NACOS_NAMESPACE: ${NACOS_NAMESPACE:-}
       SERVER_PORT: "8093"
       DB_URL: "jdbc:mysql://repair-db:3306/repair_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8"
       DB_USERNAME: repair_app
       DB_PASSWORD: "${REPAIR_DB_PASSWORD:?Set REPAIR_DB_PASSWORD in .env}"
       JAVA_TOOL_OPTIONS: "-Xmx192m -XX:MaxMetaspaceSize=192m -XX:ActiveProcessorCount=2"
-      USER_SERVICE_URL: http://user-service:8091
-      TECHNICIAN_SERVICE_URL: http://technician-service:8092
       HTTP_CONNECT_TIMEOUT_MS: "2000"
       HTTP_READ_TIMEOUT_MS: "3000"
     depends_on:
+      nacos:
+        condition: service_healthy
       repair-db:
         condition: service_healthy
     restart: unless-stopped
@@ -116,6 +162,8 @@ services:
       start_period: 40s
     restart: unless-stopped
 volumes:
+  nacos-data:
+  nacos-logs:
   user-data:
   technician-data:
   repair-data:

@@ -7,3 +7,5 @@
 *.local.ps1
 
 !.env.example
+
+**/__pycache__/

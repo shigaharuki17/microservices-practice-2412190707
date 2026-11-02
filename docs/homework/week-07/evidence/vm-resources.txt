@@ -1,0 +1,12 @@
+CPU logical processors:
+8
+Memory:
+               total        used        free      shared  buff/cache   available
+内存：          15Gi       4.4Gi       8.8Gi       6.1Mi       2.2Gi        10Gi
+交换：         3.3Gi          0B       3.3Gi
+Disk:
+sda      100G
+├─sda1     1M
+└─sda2   100G ext4     /
+文件系统        容量  已用  可用 已用% 挂载点
+/dev/sda2        99G   20G   75G   22% /

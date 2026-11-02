@@ -1,31 +1,82 @@
 # 社区报修与上门维修服务平台
 
-> 微服务开发与实践｜霍利屹｜2412190707｜第六周：微服务拆分与 HTTP 协作
+> 微服务开发与实践｜霍利屹｜2412190707｜第七周：Nacos 服务注册与发现
 
 本项目解决社区报修信息分散、派单不及时和进度难追踪的问题。当前在原 `monolith/` 中实现“住户提交报修 → 物业审核 → 按技能派单 → 维修人员确认接单”的完整受理流程，并使用 MySQL 持久化。Java 基础包保持 `com.zjgsu.hly`，新增分层代码放入其子包。
 
-## 第六周：微服务运行
+## 第七周：Nacos 服务注册与发现
 
-原 monolith 保留，services 新增 user-service（住户，8091）、technician-service（人员，8092）和 repair-service（工单，8093）。每个服务有独立数据库和账号，跨服务只保存 ID，通过 RestTemplate 查询依赖信息。
+沿用 services/ 下的 user-service（8091）、technician-service（8092）、repair-service（8093），保留各自数据库、API 和规则。三个服务通过 BOM 接入 Discovery Starter，不使用 Config Starter，也不单独覆盖 Nacos Client 版本。依赖版本：Spring Cloud 2025.1.0、Spring Cloud Alibaba 2025.1.0.0，应用仍为 Java 25 / Spring Boot 4.0.8。
+
+工单提交前通过 `DiscoveryClient.getInstances("user-service")` 获取当前实例，再以实例 URI 和 `/api/residents/{id}` 路径使用 RestTemplate 请求；派单与接单类似地发现 technician-service。每次操作重新寻址，不再配置 USER_SERVICE_URL / TECHNICIAN_SERVICE_URL。空实例或连接失败返回 503；资源不存在继续返回 404，不绕过校验写入工单。
+
+### 首次配置与启动
+
+在 Ubuntu 仓库根目录执行（依赖 Docker Compose、Bash、Python 3）：
 
 ```bash
 cp .env.example .env
-# 编辑密码，本机已有配置时不要覆盖 .env。
+# 编辑 .env 中数据库密码、NACOS_PASSWORD、NACOS_AUTH_TOKEN 和 Server identity。
+# 已有 .env 时保留原数据库密码，只补齐新增字段。
+# Token 必须是至少 32 字节随机数据的 Base64，可用 openssl rand -base64 48 生成。
+sudo docker compose config --quiet
+sudo docker compose up -d --wait nacos
+python3 scripts/nacos_admin.py init
 sudo docker compose up -d --build
 sudo docker compose ps
 bash scripts/smoke-test.sh
 sudo bash scripts/smoke-test.sh --with-failure
 ```
 
-三个健康地址分别为 `http://localhost:8091/actuator/health`、`http://localhost:8092/actuator/health`、`http://localhost:8093/actuator/health`。Windows 访问虚拟机时将 localhost 替换为 Ubuntu IP。
+`init` 仅首次初始化管理员；已初始化则验证现有凭据，不重置密码或数据。真实凭据仅在已忽略的 `.env`，不要截图或提交。默认使用 public 命名空间（NACOS_NAMESPACE 留空）和 **PERSONAL_GROUP**，与课堂 COURSE_GROUP 分开；自定义命名空间须先在控制台创建，再填写实际 ID。
 
-进入各 services/<服务名> 目录执行 `./mvnw test`（Windows 用 `.\mvnw.cmd test`），测试用 H2，无需 MySQL。镜像构建自动执行 verify。宿主机独立运行时设置 DB_URL、DB_USERNAME、DB_PASSWORD，再执行 `./mvnw spring-boot:run`。
+| 用途 | 本机默认访问地址 | 容器内地址 |
+| --- | --- | --- |
+| Nacos 3.2.4 控制台 | http://127.0.0.1:18088/ | nacos:8080 |
+| Nacos 服务端 API | http://127.0.0.1:8849/ | nacos:8848 |
+| SDK gRPC | 127.0.0.1:9849 | nacos:9848 |
+| 应用健康 | http://localhost:8091/actuator/health、8092、8093 同路径 | 各自服务端口 |
 
-工单服务 application.yml 中配置 USER_SERVICE_URL、TECHNICIAN_SERVICE_URL、HTTP_CONNECT_TIMEOUT_MS、HTTP_READ_TIMEOUT_MS；Compose 内地址覆盖为服务名。资源缺失返回 404，不可用或超时返回 503，状态/技能冲突返回 409，校验成功前不写本地工单。
+Nacos 端口默认绑定 127.0.0.1。本机 VMware 演示将 `.env` 的 NACOS_BIND_HOST 设置为私有地址 192.168.158.128，Windows 控制台访问 `http://192.168.158.128:18088/`，应用访问同 IP 的 8091/8092/8093；不向公网开放。SDK 映射端口需满足 gRPC=服务端口+1000。本次 8849/9849/18088 避免与课堂 Nacos 冲突，不能使用旧版 `8848/nacos` 作为控制台地址。
 
-停止 `sudo docker compose stop`，恢复 `sudo docker compose start`。`down` 保留数据卷，不要加 -v。旧单体使用 `sudo docker compose -f compose.monolith.yaml up -d --build`。
+NACOS_SERVER_ADDR 在 Compose 内固定为 `nacos:8848`；凭据、分组和命名空间通过环境变量传入。三个服务地址由 Nacos 返回容器内实例 IP 与端口，数据库仍只授予各自账号。Nacos 使用独立 data/logs 命名卷保存初始化及注册中心数据；业务库卷沿用第六周，不自动迁移或重置。停止 `sudo docker compose stop`，恢复 `sudo docker compose start`，不要使用 `down -v`。
 
-[服务设计与架构图](docs/microservices-design.md)｜[第六周命令、真实结果和作业文本](docs/homework/week-06/index.md)。本机共享目录须先同步到 Ubuntu 本地路径，步骤见第六周记录。
+### 测试和业务验证
+
+所有测试均关闭 Nacos 自动注册，使用 H2 或模拟发现组件，不需要真实 Nacos / MySQL。在仓库根目录执行：
+
+```bash
+for service in user-service technician-service repair-service; do
+  (cd services/$service && ./mvnw test) || exit 1
+done
+```
+
+Windows 分别进入上述三个工程，执行 `.\mvnw.cmd test`。宿主机运行应用时配置自己数据库的 DB_URL、DB_USERNAME、DB_PASSWORD，以及 NACOS_SERVER_ADDR、NACOS_USERNAME、NACOS_PASSWORD，再执行 `./mvnw spring-boot:run`。
+
+```bash
+# 快速检查控制台和服务列表（认证信息不输出）
+python3 scripts/nacos_admin.py console
+python3 scripts/nacos_admin.py snapshot manual
+# 基础验证：控制台、全部健康、注册列表、完整流程和业务错误
+bash scripts/smoke-test.sh
+# 额外真实停服、检查失败不落库、恢复后重新提交成功（需 Docker 权限）
+sudo bash scripts/smoke-test.sh --with-failure
+```
+
+脚本从仓库根目录运行，任一检查失败返回非零；停服模式设置恢复 trap。命令会创建独立演示住户、人员和工单。实际请求、状态码、实例地址、停服前后数量及新建结果写入 [第七周 evidence](docs/homework/week-07/evidence/)。控制台可访问只证明页面服务可用，业务成功需以实际请求为准。
+
+可复制执行的最小业务示例（需已创建住户 ID=1；也可直接运行 smoke 脚本自动准备）：
+
+```bash
+curl --noproxy '*' -i -H 'Content-Type: application/json' -d '{"residentId":1,"location":"7幢701","description":"水管漏水","category":"PLUMBING"}' http://localhost:8093/api/repair-orders
+curl --noproxy '*' -i http://localhost:8093/api/repair-orders
+```
+
+[第七周完整记录、四题填写文本与截图对应](docs/homework/week-07/index.md)｜[服务设计](docs/microservices-design.md)。SDK 连接存活、Nacos 实例健康和 Actuator 应用健康各有含义；发现机制不保证远程校验与本地提交的原子性，详见周记录。
+
+## 第六周：固定地址版本（历史）
+
+第六周源码和脚本见 Git 提交 `5f481e3`；[第六周验证证据](docs/homework/week-06/index.md) 保持不变。`compose.week06.yaml` 保存了原编排，仅用于已有 week06 镜像的历史演示，不要使用当前已接入 Nacos 的源码重新构建旧配置。
 
 ## 第五周：单体容器运行（历史版本）
 
@@ -207,7 +258,7 @@ Windows PowerShell 使用 `.\mvnw.cmd test`。测试显式激活 `test` profile�
 - 登录认证、角色授权、住户身份校验和房屋管理；当前角色由接口调用行为模拟，不能用于真实多用户环境。
 - 上门时间预约与冲突检测、实际维修、报价、库存、支付、验收、评价、返修。
 - 原工单重提、重新派单、人员修改/删除、分页查询和完整操作审计。
-- 统一网关、消息队列、分布式事务、自动补偿、完整业务监控与生产部署；第六周已完成三个服务拆分、HTTP 协作和本地容器编排。
+- 统一网关、消息队列、分布式事务、自动补偿、完整业务监控与生产部署；第七周继续增加 Nacos 注册、动态寻址及上下线验证。
 
 数据库模型、Service、Repository 和业务 API 已在第四周实现，不再属于“仅规划”。以下完整产品设计仍包含尚未实现的后续目标。
 

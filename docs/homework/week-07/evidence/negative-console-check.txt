@@ -1,0 +1,4 @@
+Command: NACOS_CONSOLE_URL=http://127.0.0.1:1 bash scripts/smoke-test.sh
+Expected: console check fails before business requests
+Actual exit code: 1
+PASS: Bash pipeline returns nonzero, no business requests executed.

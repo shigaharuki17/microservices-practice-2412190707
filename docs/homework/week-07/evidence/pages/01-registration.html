@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><style>body{margin:0;padding:34px;background:#eef3f8;color:#12273d;font:20px "Microsoft YaHei",sans-serif}h1{font-size:32px;margin:0 0 12px}h2{font-size:23px;margin:0 0 12px}p{line-height:1.6;margin:10px 0}.card{background:white;border:1px solid #d4e1ed;border-radius:12px;padding:22px;margin-top:17px}pre{white-space:pre-wrap;word-break:break-word;margin:0;font:18px/1.4 Consolas,"Microsoft YaHei",monospace}table{border-collapse:collapse;width:100%;font-size:20px}th,td{text-align:left;padding:12px;border-bottom:1px solid #dde5ef}.small{font-size:16px;color:#49667f}.ok{color:#087c63}</style><h1>1 · Nacos 3.2.4 部署与三个业务服务注册</h1><p class="small">社区报修与上门维修服务平台 · 第七周 · 2026-11-02 · com.zjgsu.hly</p><div class="card"><h2>实际注册列表 · public / PERSONAL_GROUP</h2><table><tr><th>服务</th><th>分组</th><th>实例 IP</th><th>端口</th><th>healthy</th></tr><tr><td>user-service</td><td>PERSONAL_GROUP</td><td>172.20.0.4</td><td>8091</td><td>True</td></tr><tr><td>technician-service</td><td>PERSONAL_GROUP</td><td>172.20.0.5</td><td>8092</td><td>True</td></tr><tr><td>repair-service</td><td>PERSONAL_GROUP</td><td>172.20.0.6</td><td>8093</td><td>True</td></tr></table></div><div class="card"><h2>实际控制台访问与管理员验证</h2><pre>GET http://192.168.158.128:18088/ HTTP 200; NACOS_CONSOLE=PASS
+NACOS_INITIALIZATION=PASS; administrator login verified; credentials omitted
+</pre></div><div class="card"><h2>Compose 运行状态 · Nacos / 三应用 / 三 MySQL</h2><pre>SERVICE              STATE     STATUS
+nacos                running   Up 10 minutes (healthy)
+repair-db            running   Up 17 minutes (healthy)
+repair-service       running   Up 4 minutes
+technician-db        running   Up 17 minutes (healthy)
+technician-service   running   Up 4 minutes
+user-db              running   Up 16 minutes (healthy)
+user-service         running   Up 2 minutes
+</pre></div><p class="small">Nacos 端口：控制台 18088→8080，API 8849→8848，gRPC 9849→9848。data/logs 均使用命名卷。</p><p class="small">真实源码/实际 HTTP 与容器记录的证据报告。后台浏览器截图，未模拟 IDE 或终端；来源在 docs/homework/week-07/evidence/，密码与 Token 不展示。</p>

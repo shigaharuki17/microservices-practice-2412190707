@@ -1,0 +1,27 @@
+{
+  "time": "2026-11-02T14:25:52+0800",
+  "api": "http://192.168.158.128:8849",
+  "group": "PERSONAL_GROUP",
+  "namespace": "public",
+  "services": {
+    "user-service": [],
+    "technician-service": [
+      {
+        "ip": "172.20.0.5",
+        "port": 8092,
+        "healthy": true,
+        "enabled": true,
+        "ephemeral": true
+      }
+    ],
+    "repair-service": [
+      {
+        "ip": "172.20.0.6",
+        "port": 8093,
+        "healthy": true,
+        "enabled": true,
+        "ephemeral": true
+      }
+    ]
+  }
+}

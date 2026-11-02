@@ -1,0 +1,15 @@
+GET http://localhost:8091/actuator/health
+HTTP 200
+{"groups": ["liveness", "readiness"], "status": "UP"}
+REGISTRY_SNAPSHOT=recovery; group=PERSONAL_GROUP
+user-service: [{"ip": "172.20.0.4", "port": 8091, "healthy": true, "enabled": true, "ephemeral": true}]
+technician-service: [{"ip": "172.20.0.5", "port": 8092, "healthy": true, "enabled": true, "ephemeral": true}]
+repair-service: [{"ip": "172.20.0.6", "port": 8093, "healthy": true, "enabled": true, "ephemeral": true}]
+GET http://localhost:8093/api/repair-orders/3
+HTTP 200
+{"category": "PLUMBING", "contactPhone": "13983651152", "createdAt": "2026-11-02T06:25:39.594674", "description": "Week07 leaking pipe", "id": 3, "location": "Building 7 Room 701", "residentId": 2, "residentName": "Week07 Resident", "reviewNote": "Approved", "status": "ACCEPTED", "technicianId": 3, "updatedAt": "2026-11-02T06:25:40.44157", "version": 3}
+POST http://localhost:8093/api/repair-orders
+HTTP 201
+{"category": "PLUMBING", "contactPhone": "13983651152", "createdAt": "2026-11-02T06:26:13.414690485", "description": "Week07 fresh valid request after recovery", "id": 5, "location": "Building 7 Room 701", "residentId": 2, "residentName": "Week07 Resident", "reviewNote": null, "status": "SUBMITTED", "technicianId": null, "updatedAt": "2026-11-02T06:26:13.414690485", "version": 0}
+RECOVERY=PASS; old order ACCEPTED; new discovered request HTTP 201; orderId=5
+SMOKE_PHASE_RECOVERY=PASS

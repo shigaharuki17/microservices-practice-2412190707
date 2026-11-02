@@ -1,0 +1,11 @@
+{
+  "time": "2026-11-02T14:21:29+0800",
+  "api": "http://192.168.158.128:8849",
+  "group": "PERSONAL_GROUP",
+  "namespace": "public",
+  "services": {
+    "user-service": [],
+    "technician-service": [],
+    "repair-service": []
+  }
+}

@@ -1,0 +1,8 @@
+SERVICE              STATE     STATUS
+nacos                running   Up 10 minutes (healthy)
+repair-db            running   Up 17 minutes (healthy)
+repair-service       running   Up 4 minutes
+technician-db        running   Up 17 minutes (healthy)
+technician-service   running   Up 4 minutes
+user-db              running   Up 16 minutes (healthy)
+user-service         running   Up 2 minutes

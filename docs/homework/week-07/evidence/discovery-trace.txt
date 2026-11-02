@@ -1,0 +1,7 @@
+repair-service-1  | 2026-11-02T06:25:39.323Z  INFO 1 --- [repair-service] [nio-8093-exec-5] com.zjgsu.hly.client.DependencyClient    : NACOS_DISCOVERY service=user-service uri=http://172.20.0.4:8091/api/residents/2
+repair-service-1  | 2026-11-02T06:25:40.258Z  INFO 1 --- [repair-service] [nio-8093-exec-4] com.zjgsu.hly.client.DependencyClient    : NACOS_DISCOVERY service=technician-service uri=http://172.20.0.5:8092/api/technicians/3
+repair-service-1  | 2026-11-02T06:25:40.413Z  INFO 1 --- [repair-service] [nio-8093-exec-6] com.zjgsu.hly.client.DependencyClient    : NACOS_DISCOVERY service=technician-service uri=http://172.20.0.5:8092/api/technicians/3
+repair-service-1  | 2026-11-02T06:25:40.848Z  INFO 1 --- [repair-service] [nio-8093-exec-8] com.zjgsu.hly.client.DependencyClient    : NACOS_DISCOVERY service=user-service uri=http://172.20.0.4:8091/api/residents/9223372036854775806
+repair-service-1  | 2026-11-02T06:25:41.009Z  INFO 1 --- [repair-service] [nio-8093-exec-3] com.zjgsu.hly.client.DependencyClient    : NACOS_DISCOVERY service=user-service uri=http://172.20.0.4:8091/api/residents/2
+repair-service-1  | 2026-11-02T06:25:41.160Z  INFO 1 --- [repair-service] [nio-8093-exec-5] com.zjgsu.hly.client.DependencyClient    : NACOS_DISCOVERY service=technician-service uri=http://172.20.0.5:8092/api/technicians/4
+repair-service-1  | 2026-11-02T06:26:13.275Z  INFO 1 --- [repair-service] [nio-8093-exec-1] com.zjgsu.hly.client.DependencyClient    : NACOS_DISCOVERY service=user-service uri=http://172.20.0.4:8091/api/residents/2

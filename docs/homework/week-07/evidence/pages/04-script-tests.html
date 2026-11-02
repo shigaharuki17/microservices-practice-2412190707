@@ -1,0 +1,32 @@
+<!doctype html><meta charset="utf-8"><style>body{margin:0;padding:34px;background:#eef3f8;color:#12273d;font:20px "Microsoft YaHei",sans-serif}h1{font-size:32px;margin:0 0 12px}h2{font-size:23px;margin:0 0 12px}p{line-height:1.6;margin:10px 0}.card{background:white;border:1px solid #d4e1ed;border-radius:12px;padding:22px;margin-top:17px}pre{white-space:pre-wrap;word-break:break-word;margin:0;font:18px/1.4 Consolas,"Microsoft YaHei",monospace}table{border-collapse:collapse;width:100%;font-size:20px}th,td{text-align:left;padding:12px;border-bottom:1px solid #dde5ef}.small{font-size:16px;color:#49667f}.ok{color:#087c63}</style><h1>4 · 验证脚本与独立测试</h1><p class="small">社区报修与上门维修服务平台 · 第七周 · 2026-11-02 · com.zjgsu.hly</p><div class="card"><h2>根目录执行与实际检查结论</h2><pre>sudo bash scripts/smoke-test.sh --with-failure
+
+GET http://192.168.158.128:18088/ HTTP 200; NACOS_CONSOLE=PASS
+MISSING_RESOURCE=PASS; local row count unchanged: 3
+CROSS_SERVICE_WORKFLOW=PASS; SUBMITTED -&gt; APPROVED -&gt; ASSIGNED -&gt; ACCEPTED
+SMOKE_PHASE_NORMAL=PASS
+USER_ACTUATOR=UNREACHABLE; stopped service, no DOWN body returned
+DEPENDENCY_UNAVAILABLE=PASS; HTTP 503; local row count unchanged: 4
+SMOKE_PHASE_OUTAGE=PASS
+RECOVERY=PASS; old order ACCEPTED; new discovered request HTTP 201; orderId=5
+SMOKE_PHASE_RECOVERY=PASS
+PERSONAL_WEEK07_DEPLOYMENT_AND_SMOKE=PASS
+EXIT_CODE=0</pre></div><div class="card"><h2>自动化测试：H2 + 模拟 DiscoveryClient，关闭 Nacos 注册</h2><pre>user-service
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.625 s -- in com.zjgsu.hly.ResidentTests
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+
+technician-service
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.500 s -- in com.zjgsu.hly.TechnicianTests
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+
+repair-service
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.561 s -- in com.zjgsu.hly.DependencyHttpTests
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.088 s -- in com.zjgsu.hly.RepairTests
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+</pre></div><div class="card"><h2>失败检查返回非零</h2><pre>Command: NACOS_CONSOLE_URL=http://127.0.0.1:1 bash scripts/smoke-test.sh
+Expected: console check fails before business requests
+Actual exit code: 1
+PASS: Bash pipeline returns nonzero, no business requests executed.
+</pre></div><p class="small">真实源码/实际 HTTP 与容器记录的证据报告。后台浏览器截图，未模拟 IDE 或终端；来源在 docs/homework/week-07/evidence/，密码与 Token 不展示。</p>

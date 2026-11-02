@@ -4,6 +4,7 @@ import json, os, sys, time
 from pathlib import Path
 from urllib.request import Request, ProxyHandler, build_opener
 from urllib.error import HTTPError, URLError
+import nacos_admin as nacos
 
 phase=sys.argv[1] if len(sys.argv)>1 else 'normal'
 urls={
@@ -11,7 +12,7 @@ urls={
  'technician':os.getenv('TECHNICIAN_URL','http://localhost:8092').rstrip('/'),
  'repair':os.getenv('REPAIR_URL','http://localhost:8093').rstrip('/')}
 opener=build_opener(ProxyHandler({}))
-evidence=Path(__file__).resolve().parents[1]/'docs/homework/week-06/evidence'
+evidence=Path(__file__).resolve().parents[1]/'docs/homework/week-07/evidence'
 evidence.mkdir(parents=True,exist_ok=True)
 events=[]
 
@@ -48,13 +49,17 @@ def health(svc):
 
 state_path=evidence/'smoke-state.json'
 if phase=='normal':
+ nacos.console_check()
  for svc in urls:health(svc)
+ for service in nacos.SERVICES:nacos.wait_instance(service,True)
+ registered=nacos.snapshot('normal')
+ assert all(registered['services'][s] for s in nacos.SERVICES)
  phone='139'+str(time.time_ns())[-8:]
- user=call('user','POST','/api/residents',201,{'name':'Week06 Resident','phone':phone})
+ user=call('user','POST','/api/residents',201,{'name':'Week07 Resident','phone':phone})
  technician=call('technician','POST','/api/technicians',201,
-  {'name':'Week06 Plumber','phone':'138'+phone[3:],'skill':'PLUMBING','available':True})
- create={'residentId':user['id'],'location':'Building 6 Room 601',
-         'description':'Week06 leaking pipe','category':'PLUMBING'}
+  {'name':'Week07 Plumber','phone':'138'+phone[3:],'skill':'PLUMBING','available':True})
+ create={'residentId':user['id'],'location':'Building 7 Room 701',
+         'description':'Week07 leaking pipe','category':'PLUMBING'}
  order=call('repair','POST','/api/repair-orders',201,create)
  route='/api/repair-orders/'+str(order['id'])
  assert order['status']=='SUBMITTED'
@@ -73,7 +78,7 @@ if phase=='normal':
  approved=call('repair','POST','/api/repair-orders',201,create)
  call('repair','POST','/api/repair-orders/'+str(approved['id'])+'/review',200,{'approved':True,'note':'Waiting'})
  mismatch=call('technician','POST','/api/technicians',201,
-  {'name':'Week06 Electrician','phone':'137'+phone[3:],'skill':'ELECTRICAL','available':True})
+  {'name':'Week07 Electrician','phone':'137'+phone[3:],'skill':'ELECTRICAL','available':True})
  route2='/api/repair-orders/'+str(approved['id'])
  call('repair','POST',route2+'/assign',409,{'technicianId':mismatch['id']})
  unchanged=call('repair','GET',route2,200)
@@ -82,18 +87,30 @@ if phase=='normal':
  state_path.write_text(json.dumps(state,indent=2)+'\n',encoding='utf-8')
  print('CROSS_SERVICE_WORKFLOW=PASS; SUBMITTED -> APPROVED -> ASSIGNED -> ACCEPTED')
 elif phase=='outage':
+ nacos.wait_instance('user-service',False)
+ nacos.snapshot('offline')
+ # An offline endpoint is unreachable; do not fabricate an Actuator DOWN response.
+ try:
+  opener.open(urls['user']+'/actuator/health',timeout=3)
+ except (URLError,HTTPError,TimeoutError,OSError):print('USER_ACTUATOR=UNREACHABLE; stopped service, no DOWN body returned')
+ else:raise AssertionError('Stopped user-service still responds')
+ health('repair')
  state=json.loads(state_path.read_text())
  before=len(call('repair','GET','/api/repair-orders',200))
- call('repair','POST','/api/repair-orders',503,state['create'])
+ call('repair','POST','/api/repair-orders',503,dict(state['create'],description='Week07 fresh valid request while user-service is offline'))
  after=len(call('repair','GET','/api/repair-orders',200))
  assert before==after, 'Unavailable dependency incorrectly created an order'
  print('DEPENDENCY_UNAVAILABLE=PASS; HTTP 503; local row count unchanged: '+str(before))
 elif phase=='recovery':
  health('user')
+ nacos.wait_instance('user-service',True)
+ nacos.snapshot('recovery')
  state=json.loads(state_path.read_text())
  saved=call('repair','GET','/api/repair-orders/'+str(state['orderId']),200)
  assert saved['status']=='ACCEPTED'
- print('RECOVERY=PASS; existing order remains ACCEPTED')
+ created=call('repair','POST','/api/repair-orders',201,dict(state['create'],description='Week07 fresh valid request after recovery'))
+ assert created['status']=='SUBMITTED' and created['residentId']==state['residentId']
+ print('RECOVERY=PASS; old order ACCEPTED; new discovered request HTTP 201; orderId='+str(created['id']))
 else:
  raise SystemExit('Unknown phase: '+phase)
 (evidence/(phase+'.json')).write_text(json.dumps(events,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

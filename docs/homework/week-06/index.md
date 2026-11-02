@@ -1,5 +1,7 @@
 # 第六周：个人项目微服务拆分
 
+> 历史记录：第七周根目录已接入 Nacos；复现本周固定地址版本时，Docker Compose 命令需加 `-f compose.week06.yaml`。原始证据保持不变。
+
 项目：社区报修与上门维修服务平台。
 仓库：https://github.com/shigaharuki17/microservices-practice-2412190707
 

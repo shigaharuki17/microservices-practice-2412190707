@@ -1,6 +1,14 @@
 spring:
   application:
     name: repair-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8849}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:}
+        group: ${NACOS_GROUP:PERSONAL_GROUP}
+        namespace: ${NACOS_NAMESPACE:}
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/repair_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8}
     username: ${DB_USERNAME:repair_db_app}
@@ -22,7 +30,7 @@ management:
     health:
       show-details: never
 dependencies:
-  user-url: ${USER_SERVICE_URL:http://localhost:8091}
-  technician-url: ${TECHNICIAN_SERVICE_URL:http://localhost:8092}
+  user-service: user-service
+  technician-service: technician-service
   connect-timeout-ms: ${HTTP_CONNECT_TIMEOUT_MS:2000}
   read-timeout-ms: ${HTTP_READ_TIMEOUT_MS:3000}

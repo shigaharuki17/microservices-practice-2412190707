@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><style>body{margin:0;padding:34px;background:#eef3f8;color:#12273d;font:20px "Microsoft YaHei",sans-serif}h1{font-size:32px;margin:0 0 12px}h2{font-size:23px;margin:0 0 12px}p{line-height:1.6;margin:10px 0}.card{background:white;border:1px solid #d4e1ed;border-radius:12px;padding:22px;margin-top:17px}pre{white-space:pre-wrap;word-break:break-word;margin:0;font:18px/1.4 Consolas,"Microsoft YaHei",monospace}table{border-collapse:collapse;width:100%;font-size:20px}th,td{text-align:left;padding:12px;border-bottom:1px solid #dde5ef}.small{font-size:16px;color:#49667f}.ok{color:#087c63}</style><h1>3 · 真实服务下线、503 不落库与恢复后 201</h1><p class="small">社区报修与上门维修服务平台 · 第七周 · 2026-11-02 · com.zjgsu.hly</p><div class="card"><h2>Nacos 当前实例变化 · 同一 user-service</h2><table><tr><th>阶段</th><th>实例数</th><th>实际地址</th></tr><tr><td>正常</td><td>1</td><td>[&#x27;172.20.0.4:8091&#x27;]</td></tr><tr><td>下线</td><td>0</td><td>[]</td></tr><tr><td>恢复</td><td>1</td><td>[&#x27;172.20.0.4:8091&#x27;]</td></tr></table></div><div class="card"><h2>下线：有效住户 + 新描述提交失败，无新增工单</h2><pre>POST http://localhost:8093/api/repair-orders
+Request: {&quot;residentId&quot;: 2, &quot;location&quot;: &quot;Building 7 Room 701&quot;, &quot;description&quot;: &quot;Week07 fresh valid request while user-service is offline&quot;, &quot;category&quot;: &quot;PLUMBING&quot;}
+HTTP 503
+{&quot;status&quot;: 503, &quot;message&quot;: &quot;依赖服务没有可用实例: user-service&quot;}
+工单总数：4 → 4</pre></div><div class="card"><h2>恢复：重新注册后，用新描述再次提交成功</h2><pre>POST http://localhost:8093/api/repair-orders
+Request: {&quot;residentId&quot;: 2, &quot;location&quot;: &quot;Building 7 Room 701&quot;, &quot;description&quot;: &quot;Week07 fresh valid request after recovery&quot;, &quot;category&quot;: &quot;PLUMBING&quot;}
+HTTP 201
+{&quot;id&quot;: 5, &quot;residentId&quot;: 2, &quot;description&quot;: &quot;Week07 fresh valid request after recovery&quot;, &quot;status&quot;: &quot;SUBMITTED&quot;}</pre></div><div class="card"><h2>Actuator 与发现状态区别</h2><pre>正常/恢复：三个应用 HTTP 200 / UP。
+user-service 停止后其健康接口不可达（没有返回 DOWN 响应）。
+同时 repair-service 健康接口仍 HTTP 200 / UP，但提交工单必须返回 503。
+SDK 连接、Nacos 注册健康与应用健康不同；服务发现不消除跨服务事务窗口。</pre></div><p class="small">真实源码/实际 HTTP 与容器记录的证据报告。后台浏览器截图，未模拟 IDE 或终端；来源在 docs/homework/week-07/evidence/，密码与 Token 不展示。</p>
