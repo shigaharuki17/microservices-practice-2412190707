@@ -4,6 +4,35 @@
 
 本项目解决社区报修信息分散、派单不及时和进度难追踪的问题。当前在原 `monolith/` 中实现“住户提交报修 → 物业审核 → 按技能派单 → 维修人员确认接单”的完整受理流程，并使用 MySQL 持久化。Java 基础包保持 `com.zjgsu.hly`，新增分层代码放入其子包。
 
+## 期中汇报材料
+
+[可视化界面实操版 PPT、文字说明、讲稿和操作流程](docs/midterm/README.md)。包含实际页面操作截图，正常演示工单为 BX-0011。
+
+## 可视化报修工作台（2026-11-08）
+
+已在现有 `repair-service` 内加入同源网页，无需另装前端工具，也不依赖外部 CDN。
+
+- Windows 浏览器访问：<http://192.168.158.128:8093/>。
+- Ubuntu 本机访问：<http://localhost:8093/>；虚拟机 IP 变化时需替换访问地址。
+- 支持工单搜索、状态与类型筛选、分页、详情、提交、审核通过或驳回、技能匹配派单、确认接单。
+- 支持新增住户及维修人员档案，档案仍由各自服务独立保存。
+- 页面通过 `/api/portal/residents`、`/api/portal/technicians` 同源接口读取和新增档案。后端仍使用 Nacos 发现实例并发起 HTTP 请求，没有跨库访问，也未放开跨域。
+- 原 `/api/repair-orders` 等业务接口保持不变。页面只在后端响应成功后显示成功，依赖不可用和重复数据会显示错误。
+
+在 Ubuntu 当前项目根目录执行：
+
+```bash
+sudo docker compose up -d --build
+# 仅更新页面或 repair-service 时：
+sudo docker compose up -d --build --no-deps repair-service
+```
+
+首次演示按“新增住户 → 新增可接单的维修人员 → 新建报修 → 查看详情 → 审核通过 → 派单 → 确认接单”操作。派单人员技能须与报修类别匹配。
+
+**范围：** 页面为课程演示工作台，尚未实现业务用户登录、角色授权及数据范围限制。住户档案不是登录账号，确认接单也不代表维修完工。不要用于真实多用户生产环境。Nacos 管理员登录与业务登录是不同功能。
+
+验证和截图见 [可视化页面说明](docs/ui-guide.md)。
+
 ## 第七周：Nacos 服务注册与发现
 
 沿用 services/ 下的 user-service（8091）、technician-service（8092）、repair-service（8093），保留各自数据库、API 和规则。三个服务通过 BOM 接入 Discovery Starter，不使用 Config Starter，也不单独覆盖 Nacos Client 版本。依赖版本：Spring Cloud 2025.1.0、Spring Cloud Alibaba 2025.1.0.0，应用仍为 Java 25 / Spring Boot 4.0.8。

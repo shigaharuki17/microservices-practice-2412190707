@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>邻里修 · 社区报修工作台</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e6155'/%3E%3Cpath d='M8 16l8-7 8 7v9H8z' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#orders" aria-label="邻里修首页"><span class="brand-icon">邻</span><span>邻里修<small>社区报修服务平台</small></span></a>
+    <div class="nav-caption">工作空间</div>
+    <nav aria-label="主导航">
+      <button class="nav-item active" data-view="orders"><span aria-hidden="true">▤</span>工单工作台<span id="nav-count" class="nav-count">—</span></button>
+      <button class="nav-item" data-view="residents"><span aria-hidden="true">♧</span>住户档案</button>
+      <button class="nav-item" data-view="technicians"><span aria-hidden="true">⚒</span>维修人员</button>
+    </nav>
+    <div class="sidebar-note"><span class="note-symbol">⌂</span><strong>让每一次报修都有回应</strong><p>从提交需求，到审核派单，<br>一起把社区照顾好。</p></div>
+    <div class="sidebar-bottom"><span class="avatar">演</span><div>课程演示工作空间<small>尚未启用登录与角色权限</small></div></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><span>社区服务 <span class="crumb">/</span> <span id="breadcrumb">工单工作台</span></span><div class="topbar-right"><span id="connection" class="connection loading">正在连接</span><span id="today"></span></div></header>
+    <main>
+      <section class="page-heading"><div><div class="eyebrow">NEIGHBORHOOD CARE</div><h1 id="page-title">工单工作台</h1><p id="page-subtitle">及时响应每一个维修需求，让处理进度清晰可见。</p></div><div class="heading-actions"><button id="refresh" class="button secondary"><span aria-hidden="true">↻</span> 刷新数据</button><button id="create" class="button primary"><span aria-hidden="true">＋</span> 新建报修</button></div></section>
+      <div id="page-alert" class="alert" role="alert" hidden></div>
+      <section id="stats" class="stats" aria-label="工单统计"></section>
+      <section id="orders-section" class="content-section">
+        <div class="section-top"><div><h2>报修工单 <span id="total-count" class="small-count">—</span></h2><p>每一步处理，都有迹可循</p></div><span id="updated" class="updated">等待加载</span></div>
+        <div class="filters"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="搜索工单编号、住户、位置或问题" aria-label="搜索工单"></label><label class="filter-label">状态<select id="status-filter" aria-label="筛选工单状态"><option value="">全部状态</option><option value="SUBMITTED">待审核</option><option value="APPROVED">待派单</option><option value="ASSIGNED">待接单</option><option value="ACCEPTED">已接单</option><option value="REJECTED">已驳回</option></select></label><label class="filter-label">类型<select id="category-filter" aria-label="筛选报修类型"><option value="">全部类型</option><option value="PLUMBING">水管维修</option><option value="ELECTRICAL">电路维修</option><option value="LOCK">门锁维修</option></select></label></div>
+        <div class="table-scroll"><table><thead><tr><th>工单 / 问题描述</th><th>住户</th><th>报修位置</th><th>维修类型</th><th>当前状态</th><th>提交时间</th><th class="align-right">操作</th></tr></thead><tbody id="order-rows"></tbody></table></div>
+        <div id="order-empty" class="empty" hidden></div>
+        <div class="table-footer"><span id="result-count"></span><div class="pagination"><button id="prev" class="page-button" aria-label="上一页">‹</button><span id="page-label"></span><button id="next" class="page-button" aria-label="下一页">›</button></div></div>
+      </section>
+      <section id="directory-section" class="content-section" hidden><div class="section-top"><div><h2 id="directory-title"></h2><p id="directory-subtitle"></p></div><span id="directory-count" class="updated"></span></div><div class="table-scroll"><table><thead id="directory-head"></thead><tbody id="directory-rows"></tbody></table></div><div id="directory-empty" class="empty" hidden></div></section>
+      <footer class="page-footer"><span>邻里修 · 社区报修与上门维修服务平台</span><span>当前支持报修受理与接单，完工和验收尚未开放</span></footer>
+    </main>
+  </div>
+  <dialog id="editor" aria-labelledby="dialog-title"><form id="editor-form"><div class="dialog-head"><div><span class="eyebrow">社区服务</span><h2 id="dialog-title"></h2></div><button type="button" class="icon-button" data-close="editor" aria-label="关闭窗口">×</button></div><p id="dialog-description" class="dialog-description"></p><div id="form-fields" class="form-fields"></div><div id="form-error" class="alert" role="alert" hidden></div><div class="dialog-footer"><button type="button" class="button secondary" data-close="editor">取消</button><button id="submit" type="submit" class="button primary">确认提交</button></div></form></dialog>
+  <dialog id="detail" class="detail-dialog" aria-labelledby="detail-title"><div class="dialog-head"><div><span class="eyebrow">工单详情</span><h2 id="detail-title"></h2></div><button class="icon-button" data-close="detail" aria-label="关闭详情">×</button></div><div id="detail-body"></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

@@ -1,0 +1,150 @@
+{
+  "url": "http://192.168.158.128:8093/",
+  "date": "2026-11-08",
+  "states": [
+    "SUBMITTED",
+    "APPROVED",
+    "ASSIGNED",
+    "ACCEPTED"
+  ],
+  "residentId": 5,
+  "technicianId": 8,
+  "orderId": 11,
+  "order": {
+    "category": "PLUMBING",
+    "contactPhone": "13923272847",
+    "createdAt": "2026-11-08T07:34:34.427827",
+    "description": "厨房水槽下方管道持续渗水，请安排水管维修。",
+    "id": 11,
+    "location": "3 幢 302 室 · 厨房",
+    "residentId": 5,
+    "residentName": "陈同学（演示）",
+    "reviewNote": "已核实漏水情况，同意受理并安排水管维修。",
+    "status": "ACCEPTED",
+    "technicianId": 8,
+    "updatedAt": "2026-11-08T07:34:36.635362333",
+    "version": 3
+  },
+  "requests": [
+    {
+      "url": "/api/portal/residents",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "/api/repair-orders",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/technicians",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/residents",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/technicians",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "/api/repair-orders",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/residents",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/technicians",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/repair-orders",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "url": "/api/repair-orders",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/residents",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/technicians",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/repair-orders/11/review",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "/api/repair-orders",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/technicians",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/residents",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/repair-orders/11/assign",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "/api/repair-orders",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/technicians",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/residents",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/repair-orders/11/accept",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "url": "/api/repair-orders",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/technicians",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "url": "/api/portal/residents",
+      "method": "GET",
+      "status": 200
+    }
+  ]
+}
