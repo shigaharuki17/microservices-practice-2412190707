@@ -8,13 +8,13 @@ fi
 mkdir -p docs/homework/week-07/evidence
 python3 scripts/smoke-test.py normal | tee docs/homework/week-07/evidence/normal.txt
 if [[ "${1:-}" == "--with-failure" ]]; then
-  restore() { docker compose start user-service >/dev/null; }
+  restore() { docker compose start user-service user-service-2 >/dev/null; }
   trap restore EXIT
-  echo '$ docker compose stop user-service'
-  docker compose stop user-service
+  echo '$ docker compose stop user-service user-service-2'
+  docker compose stop user-service user-service-2
   python3 scripts/smoke-test.py outage | tee docs/homework/week-07/evidence/outage.txt
-  echo '$ docker compose start user-service'
-  docker compose start user-service
+  echo '$ docker compose start user-service user-service-2'
+  docker compose start user-service user-service-2
   python3 scripts/smoke-test.py recovery | tee docs/homework/week-07/evidence/recovery.txt
   trap - EXIT
 fi

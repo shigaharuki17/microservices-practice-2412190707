@@ -1,0 +1,3 @@
+{"method": "POST", "url": "http://localhost:8093/api/repair-orders", "status": 503, "request": {"residentId": 9, "location": "Week08 Building 8 Room 801", "description": "Week08 stopped dependency e7f0d09ebfee48c19c5de4bc6f4d975a", "category": "PLUMBING"}, "response": {"status": 503, "message": "依赖服务没有可用实例或暂不可用"}, "dependencyInstances": []}
+UNAVAILABLE=PASS; local count 18 -> 18
+E2E_PHASE_OUTAGE=PASS

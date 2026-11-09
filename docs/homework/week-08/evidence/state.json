@@ -1,0 +1,10 @@
+{
+  "create": {
+    "residentId": 9,
+    "location": "Week08 Building 8 Room 801",
+    "description": "Week08 demo e9a6961b6a1a4e749acf2ca3dad7fc49",
+    "category": "PLUMBING"
+  },
+  "normalOrderId": 19,
+  "beforeOutage": 18
+}

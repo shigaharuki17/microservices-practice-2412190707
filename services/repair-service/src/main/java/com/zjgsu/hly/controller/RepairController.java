@@ -16,6 +16,9 @@ public class RepairController {
     }
     @GetMapping public List<RepairOrder> list() { return service.list(); }
     @GetMapping("/{id}") public RepairOrder get(@PathVariable Long id) { return service.get(id); }
+    @DeleteMapping("/{id}") public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id); return ResponseEntity.noContent().build();
+    }
     @PostMapping("/{id}/review") public RepairOrder review(@PathVariable Long id,@Valid @RequestBody Review r) { return service.review(id,r); }
     @PostMapping("/{id}/assign") public RepairOrder assign(@PathVariable Long id,@Valid @RequestBody Assign r) { return service.assign(id,r); }
     @PostMapping("/{id}/accept") public RepairOrder accept(@PathVariable Long id,@Valid @RequestBody Assign r) { return service.accept(id,r); }

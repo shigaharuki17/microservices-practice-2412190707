@@ -21,8 +21,8 @@ flowchart LR
     Client[客户端 / smoke-test.sh] --> User[user-service :8091]
     Client --> Tech[technician-service :8092]
     Client --> Repair[repair-service :8093]
-    Repair -->|RestTemplate GET /api/residents/id| User
-    Repair -->|RestTemplate GET /api/technicians/id| Tech
+    Repair -->|OpenFeign GET /api/residents/id| User
+    Repair -->|OpenFeign GET /api/technicians/id| Tech
     User --> UDB[(user_db: residents)]
     Tech --> TDB[(technician_db: technicians)]
     Repair --> RDB[(repair_db: repair_orders)]
@@ -40,9 +40,9 @@ flowchart LR
 
 ## HTTP 与服务发现配置（第七周）
 
-使用 RestTemplate，保留连接 2000ms、读取 3000ms 超时（HTTP_CONNECT_TIMEOUT_MS、HTTP_READ_TIMEOUT_MS）。DependencyClient 每次 resident/technician 操作都调用 DiscoveryClient.getInstances，取当前实例 URI 拼接业务路径；不保留固定 endpoint，不使用普通 RestTemplate 的“服务名 URL”冒充服务发现。空实例或发现异常映射 503，HTTP 404 保留为业务资源不存在。
+第 8 周使用 OpenFeign 声明式客户端与 LoadBalancer，按 user-service、technician-service 服务名调用，Nacos 提供实际实例。默认连接 2000ms、读取 3000ms 超时，可通过 HTTP_CONNECT_TIMEOUT_MS、HTTP_READ_TIMEOUT_MS 覆盖。关闭 Feign 和 LoadBalancer 自动重试，保留 400/404/409 业务错误，依赖无实例或暂不可用返回 503。两个住户实例共享本服务 user_db，分别映射宿主机端口 8091 与 8094。
 
-三个服务名称与上述映射表一致，通过 Nacos 3.2.4 注册到 public 命名空间和 PERSONAL_GROUP，与课堂 COURSE_GROUP 隔离。Compose 内 NACOS_SERVER_ADDR=nacos:8848，用户、密码、分组与命名空间由环境变量注入。公开模板仅占位，不提交真实 .env。测试 profile 禁用 Nacos，H2 与模拟 DiscoveryClient 独立验证。
+三个服务名称与上述映射表一致，通过 Nacos 3.2.4 注册到 public 命名空间和 PERSONAL_GROUP，与课堂 COURSE_GROUP 隔离。Compose 内 NACOS_SERVER_ADDR=nacos:8848，用户、密码、分组与命名空间由环境变量注入。公开模板仅占位，不提交真实 .env。测试 profile 禁用 Nacos，H2 与本机临时 HTTP 模拟服务独立验证，不连接真实 Nacos 或 MySQL。
 
 ```mermaid
 flowchart LR

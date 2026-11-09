@@ -14,7 +14,7 @@
 
 - Windows 浏览器访问：<http://192.168.158.128:8093/>。
 - Ubuntu 本机访问：<http://localhost:8093/>；虚拟机 IP 变化时需替换访问地址。
-- 支持工单搜索、状态与类型筛选、分页、详情、提交、审核通过或驳回、技能匹配派单、确认接单。
+- 支持工单搜索、状态与类型筛选、分页、详情、提交、审核通过或驳回、技能匹配派单、确认接单，以及带二次确认的单条工单删除。
 - 支持新增住户及维修人员档案，档案仍由各自服务独立保存。
 - 页面通过 `/api/portal/residents`、`/api/portal/technicians` 同源接口读取和新增档案。后端仍使用 Nacos 发现实例并发起 HTTP 请求，没有跨库访问，也未放开跨域。
 - 原 `/api/repair-orders` 等业务接口保持不变。页面只在后端响应成功后显示成功，依赖不可用和重复数据会显示错误。
@@ -37,7 +37,11 @@ sudo docker compose up -d --build --no-deps repair-service
 
 沿用 services/ 下的 user-service（8091）、technician-service（8092）、repair-service（8093），保留各自数据库、API 和规则。三个服务通过 BOM 接入 Discovery Starter，不使用 Config Starter，也不单独覆盖 Nacos Client 版本。依赖版本：Spring Cloud 2025.1.0、Spring Cloud Alibaba 2025.1.0.0，应用仍为 Java 25 / Spring Boot 4.0.8。
 
-工单提交前通过 `DiscoveryClient.getInstances("user-service")` 获取当前实例，再以实例 URI 和 `/api/residents/{id}` 路径使用 RestTemplate 请求；派单与接单类似地发现 technician-service。每次操作重新寻址，不再配置 USER_SERVICE_URL / TECHNICIAN_SERVICE_URL。空实例或连接失败返回 503；资源不存在继续返回 404，不绕过校验写入工单。
+第 7 周曾使用 DiscoveryClient + RestTemplate 手动寻址。第 8 周已改为 OpenFeign + LoadBalancer，仍使用 Nacos 注册信息和相同服务名，具体调用与双实例验证见文末第八周章节。
+
+### 控制台保护阈值误报修复
+
+本机核实 3.2.4 新版控制台会将字符串 `"false"` 当成真值显示红色保护提示。现基于原 3.2.4 镜像构建 `community-repair/nacos:3.2.4-console-fix`，只修复控制台真假值判断，服务端保护阈值、账号与业务数据保留。`docker compose up -d --build` 会自动构建该补丁镜像。详情及回退方式见 [修复说明](docs/nacos-console-fix.md)。浏览器需按 Ctrl+F5 清除旧脚本缓存。
 
 ### 首次配置与启动
 
@@ -462,3 +466,20 @@ flowchart TD
 | 运行与部署 | 容器化、日志、指标和调用链 | 服务可部署，异常能够被发现和定位 |
 
 选题背景与初步边界见 [第二周作业说明](docs/homework/week-02/index.md)。
+
+## 第八周：OpenFeign 与双实例
+
+社区报修调用已改为 Feign，保留现有界面。调用链、失败语义与超时边界见 [服务通信设计](docs/service-communication.md)，运行记录与截图见 [第八周文档](docs/homework/week-08/index.md)。
+
+```bash
+docker compose up -d --build
+docker compose ps
+bash scripts/e2e-test.sh
+docker compose logs --tail=80 user-service user-service-2 repair-service
+```
+
+住户实例宿主机端口为 8091、8094，两个实例均注册为 user-service。业务调用仍经报修服务 8093。第二端口可通过 `USER_SECOND_PORT` 覆盖；两个实例共享住户服务自己的数据库，不共享其他服务数据表。脚本会创建合成演示数据，并短暂停止两个住户实例验证失败后恢复。
+
+各服务测试命令：进入 `services/repair-service`、`services/user-service` 或 `services/technician-service`，执行 `./mvnw test`（Windows 使用 `mvnw.cmd test`）。测试不依赖真实 Nacos/MySQL。
+
+旧版 `smoke-test.sh --with-failure` 也需要停止两个住户实例；仅停止其中一个实例时，服务仍可能通过另一个实例处理请求，这是多实例的预期行为。

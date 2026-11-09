@@ -1,0 +1,264 @@
+[
+  {
+    "method": "POST",
+    "url": "http://localhost:8093/api/portal/residents",
+    "status": 201,
+    "request": {
+      "name": "Week08 Demo resident",
+      "phone": "13995937187"
+    },
+    "response": {
+      "id": 9,
+      "name": "Week08 Demo resident",
+      "phone": "13995937187"
+    },
+    "dependencyInstances": [
+      "user-1"
+    ]
+  },
+  {
+    "method": "POST",
+    "url": "http://localhost:8093/api/portal/technicians",
+    "status": 201,
+    "request": {
+      "name": "Week08 Demo plumber",
+      "phone": "13895937187",
+      "skill": "PLUMBING",
+      "available": true
+    },
+    "response": {
+      "id": 13,
+      "name": "Week08 Demo plumber",
+      "phone": "13895937187",
+      "skill": "PLUMBING",
+      "available": true
+    },
+    "dependencyInstances": []
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:8093/api/portal/residents/9",
+    "status": 200,
+    "request": null,
+    "response": {
+      "id": 9,
+      "name": "Week08 Demo resident",
+      "phone": "13995937187"
+    },
+    "dependencyInstances": [
+      "user-2"
+    ]
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:8093/api/portal/residents/9",
+    "status": 200,
+    "request": null,
+    "response": {
+      "id": 9,
+      "name": "Week08 Demo resident",
+      "phone": "13995937187"
+    },
+    "dependencyInstances": [
+      "user-1"
+    ]
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:8093/api/portal/residents/9",
+    "status": 200,
+    "request": null,
+    "response": {
+      "id": 9,
+      "name": "Week08 Demo resident",
+      "phone": "13995937187"
+    },
+    "dependencyInstances": [
+      "user-2"
+    ]
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:8093/api/portal/residents/9",
+    "status": 200,
+    "request": null,
+    "response": {
+      "id": 9,
+      "name": "Week08 Demo resident",
+      "phone": "13995937187"
+    },
+    "dependencyInstances": [
+      "user-1"
+    ]
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:8093/api/portal/residents/9",
+    "status": 200,
+    "request": null,
+    "response": {
+      "id": 9,
+      "name": "Week08 Demo resident",
+      "phone": "13995937187"
+    },
+    "dependencyInstances": [
+      "user-2"
+    ]
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:8093/api/portal/residents/9",
+    "status": 200,
+    "request": null,
+    "response": {
+      "id": 9,
+      "name": "Week08 Demo resident",
+      "phone": "13995937187"
+    },
+    "dependencyInstances": [
+      "user-1"
+    ]
+  },
+  {
+    "method": "POST",
+    "url": "http://localhost:8093/api/repair-orders",
+    "status": 201,
+    "request": {
+      "residentId": 9,
+      "location": "Week08 Building 8 Room 801",
+      "description": "Week08 demo e9a6961b6a1a4e749acf2ca3dad7fc49",
+      "category": "PLUMBING"
+    },
+    "response": {
+      "category": "PLUMBING",
+      "contactPhone": "13995937187",
+      "createdAt": "2026-11-09T09:03:19.59364382",
+      "description": "Week08 demo e9a6961b6a1a4e749acf2ca3dad7fc49",
+      "id": 19,
+      "location": "Week08 Building 8 Room 801",
+      "residentId": 9,
+      "residentName": "Week08 Demo resident",
+      "reviewNote": null,
+      "status": "SUBMITTED",
+      "technicianId": null,
+      "updatedAt": "2026-11-09T09:03:19.59364382",
+      "version": 0
+    },
+    "dependencyInstances": [
+      "user-2"
+    ]
+  },
+  {
+    "method": "POST",
+    "url": "http://localhost:8093/api/repair-orders/19/review",
+    "status": 200,
+    "request": {
+      "approved": true,
+      "note": "Week08 demo approval"
+    },
+    "response": {
+      "category": "PLUMBING",
+      "contactPhone": "13995937187",
+      "createdAt": "2026-11-09T09:03:19.593644",
+      "description": "Week08 demo e9a6961b6a1a4e749acf2ca3dad7fc49",
+      "id": 19,
+      "location": "Week08 Building 8 Room 801",
+      "residentId": 9,
+      "residentName": "Week08 Demo resident",
+      "reviewNote": "Week08 demo approval",
+      "status": "APPROVED",
+      "technicianId": null,
+      "updatedAt": "2026-11-09T09:03:19.829768042",
+      "version": 1
+    },
+    "dependencyInstances": []
+  },
+  {
+    "method": "POST",
+    "url": "http://localhost:8093/api/repair-orders/19/assign",
+    "status": 200,
+    "request": {
+      "technicianId": 13
+    },
+    "response": {
+      "category": "PLUMBING",
+      "contactPhone": "13995937187",
+      "createdAt": "2026-11-09T09:03:19.593644",
+      "description": "Week08 demo e9a6961b6a1a4e749acf2ca3dad7fc49",
+      "id": 19,
+      "location": "Week08 Building 8 Room 801",
+      "residentId": 9,
+      "residentName": "Week08 Demo resident",
+      "reviewNote": "Week08 demo approval",
+      "status": "ASSIGNED",
+      "technicianId": 13,
+      "updatedAt": "2026-11-09T09:03:19.926665818",
+      "version": 2
+    },
+    "dependencyInstances": []
+  },
+  {
+    "method": "POST",
+    "url": "http://localhost:8093/api/repair-orders/19/accept",
+    "status": 200,
+    "request": {
+      "technicianId": 13
+    },
+    "response": {
+      "category": "PLUMBING",
+      "contactPhone": "13995937187",
+      "createdAt": "2026-11-09T09:03:19.593644",
+      "description": "Week08 demo e9a6961b6a1a4e749acf2ca3dad7fc49",
+      "id": 19,
+      "location": "Week08 Building 8 Room 801",
+      "residentId": 9,
+      "residentName": "Week08 Demo resident",
+      "reviewNote": "Week08 demo approval",
+      "status": "ACCEPTED",
+      "technicianId": 13,
+      "updatedAt": "2026-11-09T09:03:19.962678104",
+      "version": 3
+    },
+    "dependencyInstances": []
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:8093/api/repair-orders/19",
+    "status": 200,
+    "request": null,
+    "response": {
+      "category": "PLUMBING",
+      "contactPhone": "13995937187",
+      "createdAt": "2026-11-09T09:03:19.593644",
+      "description": "Week08 demo e9a6961b6a1a4e749acf2ca3dad7fc49",
+      "id": 19,
+      "location": "Week08 Building 8 Room 801",
+      "residentId": 9,
+      "residentName": "Week08 Demo resident",
+      "reviewNote": "Week08 demo approval",
+      "status": "ACCEPTED",
+      "technicianId": 13,
+      "updatedAt": "2026-11-09T09:03:19.962678",
+      "version": 3
+    },
+    "dependencyInstances": []
+  },
+  {
+    "method": "POST",
+    "url": "http://localhost:8093/api/repair-orders",
+    "status": 404,
+    "request": {
+      "residentId": 9223372036854775806,
+      "location": "Week08 Building 8 Room 801",
+      "description": "Week08 demo e9a6961b6a1a4e749acf2ca3dad7fc49",
+      "category": "PLUMBING"
+    },
+    "response": {
+      "status": 404,
+      "message": "依赖资源不存在"
+    },
+    "dependencyInstances": [
+      "user-1"
+    ]
+  }
+]

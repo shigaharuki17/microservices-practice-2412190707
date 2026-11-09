@@ -1,0 +1,4 @@
+NAME                                         IMAGE                                    COMMAND                   SERVICE          CREATED         STATUS              PORTS
+community-repair-services-repair-service-1   community-repair/repair-service:week08   "java -jar /app/app.…"   repair-service   2 minutes ago   Up 2 minutes        0.0.0.0:8093->8093/tcp, [::]:8093->8093/tcp
+community-repair-services-user-service-1     community-repair/user-service:week08     "java -jar /app/app.…"   user-service     2 minutes ago   Up About a minute   0.0.0.0:8091->8091/tcp, [::]:8091->8091/tcp
+community-repair-services-user-service-2-1   community-repair/user-service:week08     "java -jar /app/app.…"   user-service-2   2 minutes ago   Up About a minute   0.0.0.0:8094->8091/tcp, [::]:8094->8091/tcp

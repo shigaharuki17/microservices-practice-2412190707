@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-09",
+  "tests": {
+    "repairService": 22,
+    "failures": 0,
+    "errors": 0
+  },
+  "temporaryOrderId": 16,
+  "uncheckedConfirmation": "no deletion",
+  "cancel": "record preserved",
+  "confirmedDelete": "204, subsequent GET 404",
+  "preExistingOrders": "preserved",
+  "directories": "preserved",
+  "listAndCount": "refreshed",
+  "errors": []
+}

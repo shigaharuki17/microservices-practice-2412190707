@@ -23,7 +23,7 @@
 
 ## 数据和服务边界
 
-`/api/portal/residents` 和 `/api/portal/technicians` 提供 GET 列表、POST 新增及 GET 单条。PortalController 负责输入输出，DependencyClient 每次操作通过 DiscoveryClient 获取当前实例地址，使用带连接和读取超时的 RestTemplate 转发。输入使用 DTO 校验，实际档案规则及存储仍由对应的 user-service 或 technician-service 完成。页面不连接数据库、不写死依赖 IP、不需要 CORS，也不保存 Nacos 凭据。
+`/api/portal/residents` 和 `/api/portal/technicians` 提供 GET 列表、POST 新增及 GET 单条。PortalController 负责输入输出，第 8 周起，DependencyClient 通过 OpenFeign 按服务名调用，底层使用 Nacos 与 LoadBalancer 寻址，保留连接和读取超时。输入使用 DTO 校验，实际档案规则及存储仍由对应的 user-service 或 technician-service 完成。页面不连接数据库、不写死依赖 IP、不需要 CORS，也不保存 Nacos 凭据。
 
 原工单 API 及业务 Service 规则继续使用。资源不存在返回 404、冲突返回 409、依赖不可用返回 503。实际维修完成、验收和业务登录权限仍未实现。
 
@@ -51,3 +51,19 @@
 
 
 截图中的姓名、联系方式和位置均为 smoke-test 及浏览器验收脚本生成的合成演示数据，不对应实际住户或维修人员；测试电话使用固定前缀与时间戳后缀构造。
+
+
+## 删除工单（2026-11-09 新增）
+
+工单列表“操作”列新增“删除”，工单详情底部也有“删除工单”。点击后显示待删工单编号、描述、住户、位置和当前状态。核对后勾选“我确认删除此工单，且理解删除后无法恢复”，再点击“确认删除”。未勾选或点击取消都不会发出删除请求。
+
+删除只移除所选工单，不删除住户和维修人员档案。成功后关闭窗口，刷新列表、分页和统计；删除失败会保留窗口并显示后端错误。删除与此前正在进行的刷新按顺序执行，避免成功删除后又展示旧列表。
+
+后端提供 `DELETE /api/repair-orders/{id}`，事务由 RepairService 管理，成功返回 204（无响应体），不存在或重复删除返回 404。已有的乐观锁冲突按原错误处理返回 409。各状态的单条工单都可删除，目前没有回收站，也没有业务登录和权限限制，因此仍仅用于课程演示。
+
+请保留期中演示工单 BX-0011。验收删除功能时应新建明确标记的临时工单，不要使用需要留存的汇报记录。
+
+
+本次删除功能验收：repair-service 在 Windows 和 Docker 构建中均通过 22 项测试。实际页面仅删除本次新建的临时工单 16，验证未勾选及取消均保留记录、确认删除后查询返回 404、原有工单和档案不变、列表及统计刷新，浏览器无运行错误。记录见 [删除验收](ui/delete-verification.json)，[确认窗口](ui/screenshots/delete-confirm.png)。
+
+第 8 周默认有两个住户实例。演示住户依赖全部不可用时，需要执行 `docker compose stop user-service user-service-2`，恢复使用 `docker compose start user-service user-service-2`。只停止一个实例时，请求仍可能由另一个实例处理。

@@ -1,0 +1,33 @@
+<!doctype html><meta charset="utf-8"><style>*{box-sizing:border-box}body{margin:0;padding:30px 40px;background:#f0f5f3;color:#173d35;font:19px/1.5 "Microsoft YaHei",sans-serif}h1{font-size:32px;margin:0 0 7px}h2{font-size:23px;margin:0 0 12px}.meta{font-size:16px;color:#63796d}p{margin:8px 0}.card{background:white;border:1px solid #d5e3da;border-radius:12px;padding:22px;margin-top:18px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:19px/1.45 Consolas,"Microsoft YaHei",monospace;margin:0}table{width:100%;border-collapse:collapse;font-size:20px}th,td{text-align:left;padding:11px;border-bottom:1px solid #dce7df;vertical-align:top}th{background:#eef6f1}.good{color:#087354;font-weight:700}.bad{color:#b54024;font-weight:700}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}footer{font-size:15px;color:#687d71;margin-top:18px}</style><h1>OpenFeign：按服务名调用住户服务，保留明确错误</h1><p class="meta">社区报修项目 · 第 08 周 · 2026-11-09 · com.zjgsu.hly</p><div class="card"><h2>repair-service · client/ResidentFeignClient.java</h2><pre>package com.zjgsu.hly.client;
+import com.zjgsu.hly.client.DependencyClient.ResidentInfo;
+import com.zjgsu.hly.dto.PortalRequests.ResidentCreate;
+import java.util.List;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
+
+@FeignClient(name = &quot;${dependencies.user-service:user-service}&quot;)
+public interface ResidentFeignClient {
+    @GetMapping(&quot;/api/residents/{id}&quot;) ResidentInfo get(@PathVariable(&quot;id&quot;) Long id);
+    @GetMapping(&quot;/api/residents&quot;) List&lt;ResidentInfo&gt; list();
+    @PostMapping(&quot;/api/residents&quot;) ResidentInfo create(@RequestBody ResidentCreate request);
+}
+</pre></div><div class="card"><h2>client/DependencyClient.java · 不把失败当作成功</h2><pre>    private &lt;T&gt; T invoke(Supplier&lt;T&gt; operation) {
+        try {
+            T result=operation.get();
+            if(result==null) throw new BusinessException(502,&quot;依赖服务返回空响应&quot;);
+            return result;
+        } catch(FeignException error) {
+            int remote=error.status();
+            if(remote==400) throw new BusinessException(400,&quot;请求参数不合法&quot;);
+            if(remote==404) throw new BusinessException(404,&quot;依赖资源不存在&quot;);
+            if(remote==409) throw new BusinessException(409,&quot;联系电话已存在或数据冲突，请核对后重试&quot;);
+            if(remote&lt;=0) throw new BusinessException(503,&quot;依赖调用失败或超时，结果可能未知；写操作请先查询确认&quot;);
+            if(remote==503) throw new BusinessException(503,&quot;依赖服务没有可用实例或暂不可用&quot;);
+            throw new BusinessException(502,&quot;依赖服务返回错误响应&quot;);
+        }
+    }
+}
+</pre></div><div class="card"><h2>配置与业务调用位置</h2><pre>RepairApplication.java：@EnableFeignClients
+application.yml：连接超时 2000ms，读取超时 3000ms
+FeignConfiguration.java：Retryer.NEVER_RETRY；LoadBalancer 重试关闭
+RepairService.create()：dependencies.resident(...) → orders.saveAndFlush(...)</pre></div><footer>真实项目源码与实际请求结果展示页，由后台浏览器截图；未模拟 IDE 或终端。原始证据位于本周 evidence/。未展示密码或 Token。</footer>

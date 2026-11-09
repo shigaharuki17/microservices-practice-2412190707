@@ -1,0 +1,27 @@
+{
+  "instances": [
+    "user-1",
+    "user-2"
+  ],
+  "samples": [
+    [
+      "user-2"
+    ],
+    [
+      "user-1"
+    ],
+    [
+      "user-2"
+    ],
+    [
+      "user-1"
+    ],
+    [
+      "user-2"
+    ],
+    [
+      "user-1"
+    ]
+  ],
+  "source": "actual callee response headers forwarded by Feign"
+}

@@ -1,7 +1,9 @@
 name: community-repair-services
 services:
   nacos:
-    image: nacos/nacos-server:v3.2.4
+    image: community-repair/nacos:3.2.4-console-fix
+    build:
+      context: ./infra/nacos
     environment:
       MODE: standalone
       NACOS_AUTH_ENABLE: "true"
@@ -27,18 +29,19 @@ services:
       retries: 40
       start_period: 45s
     restart: unless-stopped
-  user-service:
-    image: community-repair/user-service:week07
+  user-service: &user-service
+    image: community-repair/user-service:week08
     build:
       context: ./services/user-service
     ports:
       - "${USER_PORT:-8091}:8091"
-    environment:
+    environment: &user-environment
       NACOS_SERVER_ADDR: nacos:8848
       NACOS_USERNAME: ${NACOS_USERNAME:-nacos}
       NACOS_PASSWORD: ${NACOS_PASSWORD:?Set NACOS_PASSWORD in .env}
       NACOS_GROUP: ${NACOS_GROUP:-PERSONAL_GROUP}
       NACOS_NAMESPACE: ${NACOS_NAMESPACE:-}
+      INSTANCE_ID: user-1
       SERVER_PORT: "8091"
       DB_URL: "jdbc:mysql://user-db:3306/user_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8"
       DB_USERNAME: user_app
@@ -50,6 +53,13 @@ services:
       user-db:
         condition: service_healthy
     restart: unless-stopped
+  user-service-2:
+    <<: *user-service
+    ports:
+      - "${USER_SECOND_PORT:-8094}:8091"
+    environment:
+      <<: *user-environment
+      INSTANCE_ID: user-2
   user-db:
     image: mysql:8.4.11
     command: ["--performance-schema=OFF", "--innodb-buffer-pool-size=64M", "--max-connections=30"]
@@ -116,7 +126,7 @@ services:
       start_period: 40s
     restart: unless-stopped
   repair-service:
-    image: community-repair/repair-service:week07
+    image: community-repair/repair-service:week08
     build:
       context: ./services/repair-service
     ports:

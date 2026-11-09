@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-09",
+  "rows": [
+    {
+      "name": "user-service",
+      "group": "PERSONAL_GROUP",
+      "instances": "1",
+      "healthy": "1",
+      "protection": "-"
+    },
+    {
+      "name": "repair-service",
+      "group": "PERSONAL_GROUP",
+      "instances": "1",
+      "healthy": "1",
+      "protection": "-"
+    },
+    {
+      "name": "technician-service",
+      "group": "PERSONAL_GROUP",
+      "instances": "1",
+      "healthy": "1",
+      "protection": "-"
+    }
+  ],
+  "patched": true,
+  "errors": [],
+  "applicationHealth": {
+    "8091": "UP",
+    "8092": "UP",
+    "8093": "UP"
+  },
+  "existingOrder": {
+    "id": 11,
+    "status": "ACCEPTED"
+  }
+}

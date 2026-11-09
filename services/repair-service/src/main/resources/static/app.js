@@ -9,11 +9,11 @@ const orderNumber = (id) => `BX-${String(id).padStart(4,'0')}`;
 const date = (value) => value ? String(value).replace('T',' ').slice(0,16) : '—';
 const options = (values,selected) => Object.entries(values).map(([value,label]) => `<option value="${escape(value)}"${value === selected ? ' selected' : ''}>${escape(label)}</option>`).join('');
 
-async function request(path, body) {
+async function request(path, body, method = body === undefined ? 'GET' : 'POST') {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
   try {
-    const response = await fetch(path, {method:body === undefined ? 'GET':'POST',headers:body === undefined ? {}:{'Content-Type':'application/json'},body:body === undefined ? undefined:JSON.stringify(body),signal:controller.signal,cache:'no-store'});
+    const response = await fetch(path, {method,headers:body === undefined ? {}:{'Content-Type':'application/json'},body:body === undefined ? undefined:JSON.stringify(body),signal:controller.signal,cache:'no-store'});
     const type = response.headers.get('content-type') || '';
     const payload = type.includes('json') ? await response.json() : null;
     if (!response.ok) throw new Error(`${payload?.message || '请求失败，请刷新后重试'}（HTTP ${response.status}）`);
@@ -32,8 +32,14 @@ function notify(message) {
   notify.timer = setTimeout(() => { $('#toast').hidden = true; }, 5000);
 }
 
-async function refresh() {
-  if (state.refreshing) return;
+let refreshQueue = Promise.resolve();
+function refresh() {
+  // A mutation must refresh after any earlier in-flight snapshot, not skip its own refresh.
+  const current = refreshQueue.then(loadData, loadData);
+  refreshQueue = current.catch(() => {});
+  return current;
+}
+async function loadData() {
   state.refreshing = true;
   $('#refresh').disabled = true;
   const sources = [['orders','/api/repair-orders','工单'],['residents','/api/portal/residents','住户档案'],['technicians','/api/portal/technicians','维修人员']];
@@ -88,7 +94,7 @@ function render() {
   const pages = Math.max(1,Math.ceil(orders.length/state.pageSize));
   state.page = Math.min(state.page,pages);
   const offset = (state.page-1)*state.pageSize;
-  $('#order-rows').innerHTML = orders.slice(offset,offset+state.pageSize).map(order => `<tr><td><div class="order-title" title="${escape(order.description)}">${escape(order.description)}</div><span class="order-id">${orderNumber(order.id)}</span></td><td><span class="resident-name">${escape(order.residentName)}</span><span class="resident-phone">${escape(order.contactPhone)}</span></td><td class="location">${escape(order.location)}</td><td><span class="category">${escape(categories[order.category] || order.category)}</span></td><td>${badge(order.status)}</td><td class="time">${escape(date(order.createdAt)).replace(' ','<br>')}</td><td class="align-right"><button class="link-button" data-order="${order.id}">查看详情 ↗</button></td></tr>`).join('');
+  $('#order-rows').innerHTML = orders.slice(offset,offset+state.pageSize).map(order => `<tr><td><div class="order-title" title="${escape(order.description)}">${escape(order.description)}</div><span class="order-id">${orderNumber(order.id)}</span></td><td><span class="resident-name">${escape(order.residentName)}</span><span class="resident-phone">${escape(order.contactPhone)}</span></td><td class="location">${escape(order.location)}</td><td><span class="category">${escape(categories[order.category] || order.category)}</span></td><td>${badge(order.status)}</td><td class="time">${escape(date(order.createdAt)).replace(' ','<br>')}</td><td class="align-right"><button class="link-button" data-order="${order.id}">查看详情 ↗</button><button class="link-button delete-link" data-delete="${order.id}">删除</button></td></tr>`).join('');
   $('#order-empty').hidden = orders.length > 0;
   $('#order-empty').innerHTML = state.orders === null ? '<strong>暂时无法读取工单</strong>请检查上方提示，确认服务启动后刷新。' : state.orders.length ? '<strong>没有找到匹配的工单</strong>试试其他关键词，或调整状态和类型筛选。' : '<strong>还没有报修工单</strong>点击右上角“新建报修”，登记第一条维修需求。';
   $('#result-count').textContent = orders.length ? `显示 ${offset+1}–${Math.min(offset+state.pageSize,orders.length)} 条，共 ${orders.length} 条` : state.orders === null ? '数据暂不可用' : '共 0 条工单';
@@ -116,7 +122,7 @@ function showDetail(order) {
   const steps = ['SUBMITTED','APPROVED','ASSIGNED','ACCEPTED'];
   const current = steps.indexOf(order.status);
   const buttons = {SUBMITTED:'<button class="button danger" data-operation="reject">驳回报修</button><button class="button primary" data-operation="review">审核通过</button>',APPROVED:'<button class="button primary" data-operation="assign">安排维修人员</button>',ASSIGNED:'<button class="button primary" data-operation="accept">确认接单</button>'};
-  $('#detail-body').innerHTML = `<div class="detail-status">${badge(order.status)}<span>${escape(categories[order.category] || order.category)}</span></div><div class="progress">${steps.map((step,index) => `<div class="progress-step${index <= current ? ' done':''}"><span>${index <= current ? '●':'○'}　0${index+1}</span><b>${['提交报修','物业审核','安排人员','确认接单'][index]}</b></div>`).join('')}</div><dl class="detail-grid"><div><dt>报修住户</dt><dd>${escape(order.residentName)}（#${order.residentId}）</dd></div><div><dt>联系电话</dt><dd>${escape(order.contactPhone)}</dd></div><div class="full"><dt>报修位置</dt><dd>${escape(order.location)}</dd></div><div class="full"><dt>问题描述</dt><dd>${escape(order.description)}</dd></div><div><dt>维修人员</dt><dd>${order.technicianId ? escape(technician?.name || '维修人员')+'（#'+order.technicianId+'）' : '尚未分配'}</dd></div><div><dt>提交时间</dt><dd>${escape(date(order.createdAt))}</dd></div><div><dt>审核说明</dt><dd>${escape(order.reviewNote || '尚未审核')}</dd></div><div><dt>最后更新</dt><dd>${escape(date(order.updatedAt))}</dd></div></dl><div class="detail-actions">${buttons[order.status] || ''}</div><p class="detail-help">${order.status === 'REJECTED' ? '该工单已驳回。如有新的维修需求，请重新提交报修。' : order.status === 'ACCEPTED' ? '维修人员已确认接单。当前版本尚未提供完工与验收操作。' : '按提交、审核、派单、接单的顺序处理，后端会再次检查状态及业务规则。'}</p>`;
+  $('#detail-body').innerHTML = `<div class="detail-status">${badge(order.status)}<span>${escape(categories[order.category] || order.category)}</span></div><div class="progress">${steps.map((step,index) => `<div class="progress-step${index <= current ? ' done':''}"><span>${index <= current ? '●':'○'}　0${index+1}</span><b>${['提交报修','物业审核','安排人员','确认接单'][index]}</b></div>`).join('')}</div><dl class="detail-grid"><div><dt>报修住户</dt><dd>${escape(order.residentName)}（#${order.residentId}）</dd></div><div><dt>联系电话</dt><dd>${escape(order.contactPhone)}</dd></div><div class="full"><dt>报修位置</dt><dd>${escape(order.location)}</dd></div><div class="full"><dt>问题描述</dt><dd>${escape(order.description)}</dd></div><div><dt>维修人员</dt><dd>${order.technicianId ? escape(technician?.name || '维修人员')+'（#'+order.technicianId+'）' : '尚未分配'}</dd></div><div><dt>提交时间</dt><dd>${escape(date(order.createdAt))}</dd></div><div><dt>审核说明</dt><dd>${escape(order.reviewNote || '尚未审核')}</dd></div><div><dt>最后更新</dt><dd>${escape(date(order.updatedAt))}</dd></div></dl><div class="detail-actions">${buttons[order.status] || ''}<button class="button danger" data-operation="delete">删除工单</button></div><p class="detail-help">${order.status === 'REJECTED' ? '该工单已驳回。如有新的维修需求，请重新提交报修。' : order.status === 'ACCEPTED' ? '维修人员已确认接单。当前版本尚未提供完工与验收操作。' : '按提交、审核、派单、接单的顺序处理，后端会再次检查状态及业务规则。'}</p>`;
   if (!$('#detail').open) $('#detail').showModal();
 }
 
@@ -128,7 +134,11 @@ function openForm(type,order=null) {
   $('#editor-form').reset();
   $('#submit').disabled = false;
   let title, description, fields;
-  if (type === 'orders') {
+  if (type === 'delete') {
+    title = '删除工单';
+    description = `${orderNumber(order.id)} · 删除后无法恢复，请核对工单信息。`;
+    fields = `<div class="delete-summary"><strong>${escape(order.description)}</strong><p>${escape(order.residentName)} · ${escape(order.location)}</p><p>当前状态：${escape(statusLabels[order.status] || order.status)}</p></div><label class="delete-confirm"><input name="confirmDelete" type="checkbox" value="yes" required><span>我确认删除此工单，且理解删除后无法恢复</span></label><p class="detail-help">仅删除这条工单，不删除住户和维修人员档案。</p>`;
+  } else if (type === 'orders') {
     title = '新建报修'; description = '登记故障信息，提交后由物业审核。住户需先在“住户档案”中登记。';
     const residents = state.residents || [];
     fields = field('报修住户',`<select name="residentId" required><option value="">请选择住户</option>${residents.map(person => `<option value="${person.id}">${escape(person.name)} · ${escape(person.phone)}</option>`).join('')}</select>`,residents.length ? '提交时会校验该住户是否存在。':'暂无可选住户，请先关闭窗口并新增住户，或恢复住户服务后刷新。') + field('报修位置','<input name="location" maxlength="200" placeholder="例如：5 幢 501 室 · 厨房" required>') + field('维修类型',`<select name="category" required>${options(categories)}</select>`) + field('问题描述','<textarea name="description" maxlength="1000" placeholder="请描述故障现象和需要处理的问题…" required></textarea>');
@@ -154,7 +164,8 @@ function openForm(type,order=null) {
   $('#dialog-title').textContent = title;
   $('#dialog-description').textContent = description;
   $('#form-fields').innerHTML = fields;
-  $('#submit').textContent = type === 'reject' ? '确认驳回' : type === 'assign' ? '确认派单' : type === 'accept' ? '确认接单' : '确认提交';
+  $('#submit').className = 'button ' + (type === 'delete' ? 'danger' : 'primary');
+  $('#submit').textContent = type === 'delete' ? '确认删除' : type === 'reject' ? '确认驳回' : type === 'assign' ? '确认派单' : type === 'accept' ? '确认接单' : '确认提交';
   $('#detail').close();
   $('#editor').showModal();
 }
@@ -170,6 +181,20 @@ $('#editor-form').addEventListener('submit',async event => {
   const values = Object.fromEntries(new FormData(event.target));
   for (const key of Object.keys(values)) if (typeof values[key] === 'string') values[key] = values[key].trim();
   const {type,order} = state.form;
+  if (type === 'delete') {
+    try {
+      if (values.confirmDelete !== 'yes') throw new Error('请先勾选删除确认');
+      await request(`/api/repair-orders/${order.id}`, undefined, 'DELETE');
+      $('#editor').close();
+      state.order = null;
+      await refresh();
+      notify(`${orderNumber(order.id)} 已删除`);
+    } catch (error) {
+      $('#form-error').textContent = error.message;
+      $('#form-error').hidden = false;
+    } finally {button.disabled=false;button.textContent=previousText;}
+    return;
+  }
   let path,body;
   if (type === 'orders') {path='/api/repair-orders';body={...values,residentId:Number(values.residentId)};}
   else if (type === 'residents' || type === 'technicians') {path='/api/portal/'+type;body=type === 'technicians' ? {...values,available:values.available === 'true'} : values;}
@@ -198,10 +223,14 @@ for (const selector of ['#search','#status-filter','#category-filter']) $(select
 $('#prev').addEventListener('click',() => {state.page--;render();});
 $('#next').addEventListener('click',() => {state.page++;render();});
 $('#order-rows').addEventListener('click',async event => {
-  const button = event.target.closest('[data-order]');
+  const button = event.target.closest('[data-order], [data-delete]');
   if (!button) return;
   button.disabled = true;
-  try {showDetail(await request('/api/repair-orders/'+button.dataset.order));}
+  try {
+    const order = await request('/api/repair-orders/'+(button.dataset.order || button.dataset.delete));
+    if (button.hasAttribute('data-delete')) openForm('delete',order);
+    else showDetail(order);
+  }
   catch (error) {$('#page-alert').textContent=error.message;$('#page-alert').hidden=false;}
   finally {button.disabled=false;}
 });

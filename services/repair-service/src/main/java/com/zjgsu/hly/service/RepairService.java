@@ -25,6 +25,12 @@ public class RepairService {
     }
     public RepairOrder get(Long id) { return orders.findById(id).orElseThrow(()->new BusinessException(404,"工单不存在")); }
     public List<RepairOrder> list() { return orders.findAll(Sort.by("id")); }
+    @Transactional public void delete(Long id) {
+        var order=get(id);
+        // Only remove the local order. Resident and technician data belong to other services.
+        orders.delete(order);
+        orders.flush();
+    }
     @Transactional public RepairOrder review(Long id,Review r) {
         var o=get(id); require(o,"SUBMITTED"); o.status=r.approved()?"APPROVED":"REJECTED";
         o.reviewNote=r.note().trim(); return orders.saveAndFlush(o);

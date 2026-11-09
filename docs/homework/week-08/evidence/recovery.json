@@ -1,0 +1,53 @@
+[
+  {
+    "method": "POST",
+    "url": "http://localhost:8093/api/repair-orders",
+    "status": 201,
+    "request": {
+      "residentId": 9,
+      "location": "Week08 Building 8 Room 801",
+      "description": "Week08 recovery d85983d9355841fd89d968c0afa021b5",
+      "category": "PLUMBING"
+    },
+    "response": {
+      "category": "PLUMBING",
+      "contactPhone": "13995937187",
+      "createdAt": "2026-11-09T09:03:45.824774208",
+      "description": "Week08 recovery d85983d9355841fd89d968c0afa021b5",
+      "id": 20,
+      "location": "Week08 Building 8 Room 801",
+      "residentId": 9,
+      "residentName": "Week08 Demo resident",
+      "reviewNote": null,
+      "status": "SUBMITTED",
+      "technicianId": null,
+      "updatedAt": "2026-11-09T09:03:45.824774208",
+      "version": 0
+    },
+    "dependencyInstances": [
+      "user-1"
+    ]
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:8093/api/repair-orders/20",
+    "status": 200,
+    "request": null,
+    "response": {
+      "category": "PLUMBING",
+      "contactPhone": "13995937187",
+      "createdAt": "2026-11-09T09:03:45.824774",
+      "description": "Week08 recovery d85983d9355841fd89d968c0afa021b5",
+      "id": 20,
+      "location": "Week08 Building 8 Room 801",
+      "residentId": 9,
+      "residentName": "Week08 Demo resident",
+      "reviewNote": null,
+      "status": "SUBMITTED",
+      "technicianId": null,
+      "updatedAt": "2026-11-09T09:03:45.824774",
+      "version": 0
+    },
+    "dependencyInstances": []
+  }
+]
