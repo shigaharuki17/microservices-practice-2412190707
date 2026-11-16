@@ -242,20 +242,30 @@ setView(location.hash.slice(1));
 // JWT is kept in memory, not in browser local storage.
 const loginDialog=document.createElement('dialog');
 loginDialog.id='login-dialog';
-loginDialog.innerHTML='<form id="login-form"><div class="dialog-head"><h2>登录社区报修工作台</h2></div><div class="form-fields"><label>账号<input name="username" autocomplete="username" required maxlength="80" placeholder="请输入账号"></label><label>密码<input name="password" type="password" autocomplete="current-password" required maxlength="72"></label></div><p id="login-error" class="alert" hidden></p><div class="dialog-footer"><button type="submit" class="button primary">登录</button></div></form>';
+loginDialog.setAttribute('aria-labelledby','login-title');
+loginDialog.setAttribute('aria-describedby','login-description');
+loginDialog.innerHTML=`<form id="login-form">
+  <div class="login-heading"><h2 id="login-title">登录社区报修工作台</h2><p id="login-description">请输入账号和密码</p></div>
+  <div class="form-fields">
+    <label class="field" for="login-username"><span>账号</span><input id="login-username" name="username" autocomplete="username" required maxlength="80" placeholder="请输入账号" autofocus></label>
+    <label class="field" for="login-password"><span>密码</span><input id="login-password" name="password" type="password" autocomplete="current-password" required maxlength="72" placeholder="请输入密码"></label>
+  </div>
+  <p id="login-error" class="alert" role="alert" hidden></p>
+  <div class="dialog-footer"><button type="submit" class="button primary">登录</button></div>
+</form>`;
 document.body.append(loginDialog);
 loginDialog.addEventListener('cancel',event=>event.preventDefault());
-function showLogin(){if(!loginDialog.open)loginDialog.showModal();}
+function showLogin(){if(!loginDialog.open){$('#login-error').hidden=true;loginDialog.showModal();}}
 const logout=document.createElement('button');logout.className='button secondary';logout.textContent='退出登录';
 logout.addEventListener('click',()=>{accessToken='';state.orders=state.residents=state.technicians=null;render();showLogin();});
 $('#refresh').parentNode.append(logout);
 $('#login-form').addEventListener('submit',async event=>{
- event.preventDefault();const form=event.target;const button=form.querySelector('button');button.disabled=true;
+ event.preventDefault();const form=event.target;const button=form.querySelector('button');button.disabled=true;button.textContent='登录中…';
  try{
   const result=await request('/api/auth/login',{username:form.elements.username.value,password:form.elements.password.value});
   accessToken=result.accessToken;form.elements.password.value='';loginDialog.close();
   logout.textContent=result.username+' · '+result.role+' · 退出登录';await refresh();
  }catch(error){$('#login-error').hidden=false;$('#login-error').textContent=error.message;}
- finally{button.disabled=false;}
+ finally{button.disabled=false;button.textContent='登录';}
 });
 showLogin();
