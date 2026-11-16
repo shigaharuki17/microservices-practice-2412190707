@@ -243,9 +243,8 @@ setView(location.hash.slice(1));
 const loginDialog=document.createElement('dialog');
 loginDialog.id='login-dialog';
 loginDialog.setAttribute('aria-labelledby','login-title');
-loginDialog.setAttribute('aria-describedby','login-description');
 loginDialog.innerHTML=`<form id="login-form">
-  <div class="login-heading"><h2 id="login-title">登录社区报修工作台</h2><p id="login-description">请输入账号和密码</p></div>
+  <div class="login-heading"><h2 id="login-title">登录社区报修工作台</h2></div>
   <div class="form-fields">
     <label class="field" for="login-username"><span>账号</span><input id="login-username" name="username" autocomplete="username" required maxlength="80" placeholder="请输入账号" autofocus></label>
     <label class="field" for="login-password"><span>密码</span><input id="login-password" name="password" type="password" autocomplete="current-password" required maxlength="72" placeholder="请输入密码"></label>
