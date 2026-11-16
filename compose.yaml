@@ -1,5 +1,30 @@
 name: community-repair-services
 services:
+  gateway-service:
+    image: community-repair/gateway-service:week09
+    build:
+      context: ./services/gateway-service
+    ports:
+      - "${GATEWAY_PORT:-18081}:8080"
+    environment:
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:?Set INTERNAL_API_KEY in .env}
+      NACOS_SERVER_ADDR: nacos:8848
+      NACOS_USERNAME: ${NACOS_USERNAME:-nacos}
+      NACOS_PASSWORD: ${NACOS_PASSWORD:?Set NACOS_PASSWORD in .env}
+      NACOS_GROUP: ${NACOS_GROUP:-PERSONAL_GROUP}
+      NACOS_NAMESPACE: ${NACOS_NAMESPACE:-}
+      JAVA_TOOL_OPTIONS: "-Xmx192m -XX:ActiveProcessorCount=2"
+    depends_on:
+      nacos:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+      repair-service:
+        condition: service_started
+      technician-service:
+        condition: service_started
+    restart: unless-stopped
   nacos:
     image: community-repair/nacos:3.2.4-console-fix
     build:
@@ -30,17 +55,21 @@ services:
       start_period: 45s
     restart: unless-stopped
   user-service: &user-service
-    image: community-repair/user-service:week08
+    image: community-repair/user-service:week09
     build:
       context: ./services/user-service
     ports:
-      - "${USER_PORT:-8091}:8091"
+      - "127.0.0.1:${USER_PORT:-8091}:8091"
     environment: &user-environment
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:?Set INTERNAL_API_KEY in .env}
       NACOS_SERVER_ADDR: nacos:8848
       NACOS_USERNAME: ${NACOS_USERNAME:-nacos}
       NACOS_PASSWORD: ${NACOS_PASSWORD:?Set NACOS_PASSWORD in .env}
       NACOS_GROUP: ${NACOS_GROUP:-PERSONAL_GROUP}
       NACOS_NAMESPACE: ${NACOS_NAMESPACE:-}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      DEMO_ADMIN_PASSWORD: ${DEMO_ADMIN_PASSWORD:-}
+      DEMO_RESIDENT_PASSWORD: ${DEMO_RESIDENT_PASSWORD:-}
       INSTANCE_ID: user-1
       SERVER_PORT: "8091"
       DB_URL: "jdbc:mysql://user-db:3306/user_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8"
@@ -56,7 +85,7 @@ services:
   user-service-2:
     <<: *user-service
     ports:
-      - "${USER_SECOND_PORT:-8094}:8091"
+      - "127.0.0.1:${USER_SECOND_PORT:-8094}:8091"
     environment:
       <<: *user-environment
       INSTANCE_ID: user-2
@@ -82,12 +111,13 @@ services:
       start_period: 40s
     restart: unless-stopped
   technician-service:
-    image: community-repair/technician-service:week07
+    image: community-repair/technician-service:week09
     build:
       context: ./services/technician-service
     ports:
-      - "${TECHNICIAN_PORT:-8092}:8092"
+      - "127.0.0.1:${TECHNICIAN_PORT:-8092}:8092"
     environment:
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:?Set INTERNAL_API_KEY in .env}
       NACOS_SERVER_ADDR: nacos:8848
       NACOS_USERNAME: ${NACOS_USERNAME:-nacos}
       NACOS_PASSWORD: ${NACOS_PASSWORD:?Set NACOS_PASSWORD in .env}
@@ -126,12 +156,13 @@ services:
       start_period: 40s
     restart: unless-stopped
   repair-service:
-    image: community-repair/repair-service:week08
+    image: community-repair/repair-service:week09
     build:
       context: ./services/repair-service
     ports:
-      - "${REPAIR_PORT:-8093}:8093"
+      - "127.0.0.1:${REPAIR_PORT:-8093}:8093"
     environment:
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:?Set INTERNAL_API_KEY in .env}
       NACOS_SERVER_ADDR: nacos:8848
       NACOS_USERNAME: ${NACOS_USERNAME:-nacos}
       NACOS_PASSWORD: ${NACOS_PASSWORD:?Set NACOS_PASSWORD in .env}

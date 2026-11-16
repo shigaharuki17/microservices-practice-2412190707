@@ -1,0 +1,119 @@
+{
+  "verifiedAt": "2026-11-16T08:02:01.075472+00:00",
+  "base": "http://localhost:18081",
+  "checks": [
+    {
+      "case": "public health",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "case": "missing JWT",
+      "status": 401,
+      "pass": true
+    },
+    {
+      "case": "wrong password",
+      "status": 401,
+      "pass": true
+    },
+    {
+      "case": "resident login",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "case": "authenticated identity",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "case": "route user-service",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "case": "route technician-service",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "case": "route repair-service",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "case": "resident denied administrator API",
+      "status": 403,
+      "pass": true
+    },
+    {
+      "case": "forged identity overwritten",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "case": "forged administrator role denied",
+      "status": 403,
+      "pass": true
+    },
+    {
+      "case": "admin login",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "case": "administrator allowed",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "case": "tampered JWT",
+      "status": 401,
+      "pass": true
+    },
+    {
+      "case": "expired JWT",
+      "status": 401,
+      "pass": true
+    },
+    {
+      "case": "direct backend with forged identity",
+      "status": 403,
+      "pass": true
+    },
+    {
+      "case": "gateway and internal Feign call",
+      "status": 200,
+      "pass": true
+    }
+  ],
+  "routes": [
+    {
+      "path": "/api/residents",
+      "status": 200,
+      "route": "user-service",
+      "recordCount": 1
+    },
+    {
+      "path": "/api/technicians",
+      "status": 200,
+      "route": "technician-service",
+      "recordCount": 1
+    },
+    {
+      "path": "/api/repair-orders",
+      "status": 200,
+      "route": "repair-service",
+      "recordCount": 1
+    }
+  ],
+  "identity": {
+    "role": "RESIDENT",
+    "username": "resident"
+  },
+  "adminSummary": {
+    "viewer": "admin",
+    "accountCount": 2
+  }
+}

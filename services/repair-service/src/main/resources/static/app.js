@@ -1,4 +1,5 @@
 'use strict';
+let accessToken = '';
 const $ = (selector) => document.querySelector(selector);
 const statusLabels = {SUBMITTED:'待审核',APPROVED:'待派单',ASSIGNED:'待接单',ACCEPTED:'已接单',REJECTED:'已驳回'};
 const categories = {PLUMBING:'水管维修',ELECTRICAL:'电路维修',LOCK:'门锁维修'};
@@ -13,9 +14,10 @@ async function request(path, body, method = body === undefined ? 'GET' : 'POST')
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
   try {
-    const response = await fetch(path, {method,headers:body === undefined ? {}:{'Content-Type':'application/json'},body:body === undefined ? undefined:JSON.stringify(body),signal:controller.signal,cache:'no-store'});
+    const response = await fetch(path, {method,headers:{...(body === undefined ? {}:{'Content-Type':'application/json'}),...(accessToken ? {'Authorization':'Bearer '+accessToken}:{})},body:body === undefined ? undefined:JSON.stringify(body),signal:controller.signal,cache:'no-store'});
     const type = response.headers.get('content-type') || '';
     const payload = type.includes('json') ? await response.json() : null;
+    if (response.status === 401 && path !== '/api/auth/login') {accessToken='';showLogin();}
     if (!response.ok) throw new Error(`${payload?.message || '请求失败，请刷新后重试'}（HTTP ${response.status}）`);
     return payload;
   } catch (error) {
@@ -237,4 +239,23 @@ $('#order-rows').addEventListener('click',async event => {
 $('#detail-body').addEventListener('click',event => {const button=event.target.closest('[data-operation]');if(button)openForm(button.dataset.operation,state.order);});
 $('#today').textContent = new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
 setView(location.hash.slice(1));
-refresh();
+// JWT is kept in memory, not in browser local storage.
+const loginDialog=document.createElement('dialog');
+loginDialog.id='login-dialog';
+loginDialog.innerHTML='<form id="login-form"><div class="dialog-head"><h2>登录社区报修工作台</h2></div><div class="form-fields"><label>账号<input name="username" autocomplete="username" required maxlength="80" placeholder="请输入账号"></label><label>密码<input name="password" type="password" autocomplete="current-password" required maxlength="72"></label></div><p id="login-error" class="alert" hidden></p><div class="dialog-footer"><button type="submit" class="button primary">登录</button></div></form>';
+document.body.append(loginDialog);
+loginDialog.addEventListener('cancel',event=>event.preventDefault());
+function showLogin(){if(!loginDialog.open)loginDialog.showModal();}
+const logout=document.createElement('button');logout.className='button secondary';logout.textContent='退出登录';
+logout.addEventListener('click',()=>{accessToken='';state.orders=state.residents=state.technicians=null;render();showLogin();});
+$('#refresh').parentNode.append(logout);
+$('#login-form').addEventListener('submit',async event=>{
+ event.preventDefault();const form=event.target;const button=form.querySelector('button');button.disabled=true;
+ try{
+  const result=await request('/api/auth/login',{username:form.elements.username.value,password:form.elements.password.value});
+  accessToken=result.accessToken;form.elements.password.value='';loginDialog.close();
+  logout.textContent=result.username+' · '+result.role+' · 退出登录';await refresh();
+ }catch(error){$('#login-error').hidden=false;$('#login-error').textContent=error.message;}
+ finally{button.disabled=false;}
+});
+showLogin();

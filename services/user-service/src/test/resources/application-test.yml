@@ -11,3 +11,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+
+app:
+  internal-security:
+    enabled: false
+auth:
+  jwt-secret: unit-test-only-signing-key-not-for-deployment-123456

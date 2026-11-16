@@ -11,3 +11,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+
+app:
+  internal-security:
+    enabled: false

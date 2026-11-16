@@ -1,0 +1,237 @@
+{
+  "name": "community-repair-week09-preview",
+  "services": {
+    "user-service": {
+      "image": "community-repair/user-service:week09-verification",
+      "environment": {
+        "INTERNAL_API_KEY": "${INTERNAL_API_KEY}",
+        "NACOS_SERVER_ADDR": "${VERIFY_NACOS_ADDR:-192.168.158.128:8849}",
+        "NACOS_USERNAME": "${NACOS_USERNAME:-nacos}",
+        "NACOS_PASSWORD": "${NACOS_PASSWORD}",
+        "NACOS_GROUP": "WEEK09_VERIFY_GROUP",
+        "NACOS_NAMESPACE": "",
+        "JAVA_TOOL_OPTIONS": "-Xmx192m -XX:MaxMetaspaceSize=192m -XX:ActiveProcessorCount=2",
+        "SERVER_PORT": "8091",
+        "DB_URL": "jdbc:mysql://user-db:3306/user_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8",
+        "DB_USERNAME": "user_app",
+        "DB_PASSWORD": "${USER_DB_PASSWORD}",
+        "JWT_SECRET": "${JWT_SECRET}",
+        "DEMO_ADMIN_PASSWORD": "${DEMO_ADMIN_PASSWORD}",
+        "DEMO_RESIDENT_PASSWORD": "${DEMO_RESIDENT_PASSWORD}",
+        "INSTANCE_ID": "user-1"
+      },
+      "ports": [
+        "127.0.0.1:19091:8091"
+      ],
+      "depends_on": {
+        "user-db": {
+          "condition": "service_healthy"
+        }
+      },
+      "build": {
+        "context": "./services/user-service"
+      }
+    },
+    "user-service-2": {
+      "image": "community-repair/user-service:week09-verification",
+      "environment": {
+        "INTERNAL_API_KEY": "${INTERNAL_API_KEY}",
+        "NACOS_SERVER_ADDR": "${VERIFY_NACOS_ADDR:-192.168.158.128:8849}",
+        "NACOS_USERNAME": "${NACOS_USERNAME:-nacos}",
+        "NACOS_PASSWORD": "${NACOS_PASSWORD}",
+        "NACOS_GROUP": "WEEK09_VERIFY_GROUP",
+        "NACOS_NAMESPACE": "",
+        "JAVA_TOOL_OPTIONS": "-Xmx192m -XX:MaxMetaspaceSize=192m -XX:ActiveProcessorCount=2",
+        "SERVER_PORT": "8091",
+        "DB_URL": "jdbc:mysql://user-db:3306/user_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8",
+        "DB_USERNAME": "user_app",
+        "DB_PASSWORD": "${USER_DB_PASSWORD}",
+        "JWT_SECRET": "${JWT_SECRET}",
+        "DEMO_ADMIN_PASSWORD": "${DEMO_ADMIN_PASSWORD}",
+        "DEMO_RESIDENT_PASSWORD": "${DEMO_RESIDENT_PASSWORD}",
+        "INSTANCE_ID": "user-2"
+      },
+      "ports": [
+        "127.0.0.1:19094:8091"
+      ],
+      "depends_on": {
+        "user-db": {
+          "condition": "service_healthy"
+        }
+      },
+      "build": {
+        "context": "./services/user-service"
+      }
+    },
+    "technician-service": {
+      "image": "community-repair/technician-service:week09-verification",
+      "environment": {
+        "INTERNAL_API_KEY": "${INTERNAL_API_KEY}",
+        "NACOS_SERVER_ADDR": "${VERIFY_NACOS_ADDR:-192.168.158.128:8849}",
+        "NACOS_USERNAME": "${NACOS_USERNAME:-nacos}",
+        "NACOS_PASSWORD": "${NACOS_PASSWORD}",
+        "NACOS_GROUP": "WEEK09_VERIFY_GROUP",
+        "NACOS_NAMESPACE": "",
+        "JAVA_TOOL_OPTIONS": "-Xmx192m -XX:MaxMetaspaceSize=192m -XX:ActiveProcessorCount=2",
+        "SERVER_PORT": "8092",
+        "DB_URL": "jdbc:mysql://technician-db:3306/technician_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8",
+        "DB_USERNAME": "technician_app",
+        "DB_PASSWORD": "${TECHNICIAN_DB_PASSWORD}"
+      },
+      "ports": [
+        "127.0.0.1:19092:8092"
+      ],
+      "depends_on": {
+        "technician-db": {
+          "condition": "service_healthy"
+        }
+      },
+      "build": {
+        "context": "./services/technician-service"
+      }
+    },
+    "repair-service": {
+      "image": "community-repair/repair-service:week09-verification",
+      "environment": {
+        "INTERNAL_API_KEY": "${INTERNAL_API_KEY}",
+        "NACOS_SERVER_ADDR": "${VERIFY_NACOS_ADDR:-192.168.158.128:8849}",
+        "NACOS_USERNAME": "${NACOS_USERNAME:-nacos}",
+        "NACOS_PASSWORD": "${NACOS_PASSWORD}",
+        "NACOS_GROUP": "WEEK09_VERIFY_GROUP",
+        "NACOS_NAMESPACE": "",
+        "JAVA_TOOL_OPTIONS": "-Xmx192m -XX:MaxMetaspaceSize=192m -XX:ActiveProcessorCount=2",
+        "SERVER_PORT": "8093",
+        "DB_URL": "jdbc:mysql://repair-db:3306/repair_db?connectionTimeZone=Asia/Shanghai&characterEncoding=UTF-8",
+        "DB_USERNAME": "repair_app",
+        "DB_PASSWORD": "${REPAIR_DB_PASSWORD}"
+      },
+      "ports": [
+        "127.0.0.1:19093:8093"
+      ],
+      "depends_on": {
+        "repair-db": {
+          "condition": "service_healthy"
+        }
+      },
+      "build": {
+        "context": "./services/repair-service"
+      }
+    },
+    "user-db": {
+      "image": "mysql:8.4.11",
+      "command": [
+        "--performance-schema=OFF",
+        "--innodb-buffer-pool-size=64M",
+        "--max-connections=30"
+      ],
+      "environment": {
+        "MYSQL_DATABASE": "user_db",
+        "MYSQL_USER": "user_app",
+        "MYSQL_PASSWORD": "${USER_DB_PASSWORD}",
+        "MYSQL_ROOT_PASSWORD": "${MYSQL_ROOT_PASSWORD}"
+      },
+      "volumes": [
+        "user-data:/var/lib/mysql"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "MYSQL_PWD=\"$$MYSQL_PASSWORD\" mysql --protocol=TCP -h 127.0.0.1 -u\"$$MYSQL_USER\" -D\"$$MYSQL_DATABASE\" -e \"SELECT 1\" >/dev/null 2>&1"
+        ],
+        "interval": "3s",
+        "timeout": "3s",
+        "retries": 40,
+        "start_period": "20s"
+      }
+    },
+    "technician-db": {
+      "image": "mysql:8.4.11",
+      "command": [
+        "--performance-schema=OFF",
+        "--innodb-buffer-pool-size=64M",
+        "--max-connections=30"
+      ],
+      "environment": {
+        "MYSQL_DATABASE": "technician_db",
+        "MYSQL_USER": "technician_app",
+        "MYSQL_PASSWORD": "${TECHNICIAN_DB_PASSWORD}",
+        "MYSQL_ROOT_PASSWORD": "${MYSQL_ROOT_PASSWORD}"
+      },
+      "volumes": [
+        "technician-data:/var/lib/mysql"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "MYSQL_PWD=\"$$MYSQL_PASSWORD\" mysql --protocol=TCP -h 127.0.0.1 -u\"$$MYSQL_USER\" -D\"$$MYSQL_DATABASE\" -e \"SELECT 1\" >/dev/null 2>&1"
+        ],
+        "interval": "3s",
+        "timeout": "3s",
+        "retries": 40,
+        "start_period": "20s"
+      }
+    },
+    "repair-db": {
+      "image": "mysql:8.4.11",
+      "command": [
+        "--performance-schema=OFF",
+        "--innodb-buffer-pool-size=64M",
+        "--max-connections=30"
+      ],
+      "environment": {
+        "MYSQL_DATABASE": "repair_db",
+        "MYSQL_USER": "repair_app",
+        "MYSQL_PASSWORD": "${REPAIR_DB_PASSWORD}",
+        "MYSQL_ROOT_PASSWORD": "${MYSQL_ROOT_PASSWORD}"
+      },
+      "volumes": [
+        "repair-data:/var/lib/mysql"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "MYSQL_PWD=\"$$MYSQL_PASSWORD\" mysql --protocol=TCP -h 127.0.0.1 -u\"$$MYSQL_USER\" -D\"$$MYSQL_DATABASE\" -e \"SELECT 1\" >/dev/null 2>&1"
+        ],
+        "interval": "3s",
+        "timeout": "3s",
+        "retries": 40,
+        "start_period": "20s"
+      }
+    },
+    "gateway-service": {
+      "image": "community-repair/gateway-service:week09-verification",
+      "environment": {
+        "INTERNAL_API_KEY": "${INTERNAL_API_KEY}",
+        "NACOS_SERVER_ADDR": "${VERIFY_NACOS_ADDR:-192.168.158.128:8849}",
+        "NACOS_USERNAME": "${NACOS_USERNAME:-nacos}",
+        "NACOS_PASSWORD": "${NACOS_PASSWORD}",
+        "NACOS_GROUP": "WEEK09_VERIFY_GROUP",
+        "NACOS_NAMESPACE": "",
+        "JAVA_TOOL_OPTIONS": "-Xmx192m -XX:MaxMetaspaceSize=192m -XX:ActiveProcessorCount=2",
+        "JWT_SECRET": "${JWT_SECRET}"
+      },
+      "ports": [
+        "18081:8080"
+      ],
+      "depends_on": {
+        "user-service": {
+          "condition": "service_started"
+        },
+        "technician-service": {
+          "condition": "service_started"
+        },
+        "repair-service": {
+          "condition": "service_started"
+        }
+      },
+      "build": {
+        "context": "./services/gateway-service"
+      }
+    }
+  },
+  "volumes": {
+    "user-data": {},
+    "technician-data": {},
+    "repair-data": {}
+  }
+}

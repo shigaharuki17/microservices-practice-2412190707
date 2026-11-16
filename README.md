@@ -1,5 +1,17 @@
 # 社区报修与上门维修服务平台
 
+## 第九周：网关与认证入口
+
+本周验证入口为 `http://<Ubuntu-IP>:18081/`，工作台已接入登录；本周配置将业务端口限制为回环诊断访问。
+首次配置好原数据库/Nacos `.env` 后运行 `python3 scripts/init-auth-env.py`，再执行 `docker compose up -d --build`。
+测试账号为 `admin`（ADMIN）和 `resident`（RESIDENT），随机测试密码仅保存在本地 `.env`，数据库保存 BCrypt 哈希。
+`bash scripts/auth-test.sh` 验证登录、认证、角色、三条路由及防绕过，失败返回非零退出码。
+完整说明：[安全与路由](docs/security.md)、[本周作业和截图](docs/homework/week-09/index.md)。
+本周在独立 Ubuntu 验证环境运行，原环境尚未替换，详情见本周文档。采用本周配置后，旧周次直接访问业务端口的示例属于历史验证记录，需从网关携带 JWT 访问。旧脚本若未携带内部凭据不再适用于本周部署。
+
+测试：`./services/user-service/mvnw -f services/user-service/pom.xml test`；将 pom.xml 路径中的服务名分别换为 `technician-service`、`repair-service`、`gateway-service` 可运行对应测试。
+
+
 > 微服务开发与实践｜霍利屹｜2412190707｜第七周：Nacos 服务注册与发现
 
 本项目解决社区报修信息分散、派单不及时和进度难追踪的问题。当前在原 `monolith/` 中实现“住户提交报修 → 物业审核 → 按技能派单 → 维修人员确认接单”的完整受理流程，并使用 MySQL 持久化。Java 基础包保持 `com.zjgsu.hly`，新增分层代码放入其子包。
