@@ -73,18 +73,24 @@ JWT 使用 HS256，包含 `sub`、`roles`、`iss=https://community-repair.local`
 
 参考：[Spring Cloud Gateway](https://docs.spring.io/spring-cloud-gateway/reference/)、[Spring Security JWT](https://docs.spring.io/spring-security/reference/reactive/oauth2/resource-server/jwt.html)。
 
-## 本次 Ubuntu 实际验证环境
+## 本次 Ubuntu 原部署更新与验证
 
-本次运行证据来自独立目录 `/home/weifuwu/community-repair-week09-preview`、Compose 项目 `community-repair-week09-preview`，使用独立数据库卷及 Nacos 的 `WEEK09_VERIFY_GROUP`。原 `/home/weifuwu/community-repair-week07` 运行环境与业务数据未替换。两套环境不能混用诊断端口或注册分组。
+经用户确认后，已在原目录 `/home/weifuwu/community-repair-week07`、原 Compose 项目 `community-repair-services` 更新本周网关与认证配置。截图及运行证据已重新取自原环境，注册分组继续使用 `PERSONAL_GROUP`。
 
-验证入口为 `http://192.168.158.128:18081/`，后端回环诊断端口为 19091（住户实例一）、19094（住户实例二）、19092（维修人员）、19093（报修）。验证库只包含本周新建的测试数据，不将其描述为原库历史业务数据。根目录 `compose.yaml` 提供正式更新配置；`compose.week09-verify.json` 是本次独立验证配置。
+统一入口为 `http://192.168.158.128:18081/`。住户两个实例的回环诊断端口为 8091、8094，维修人员为 8092，报修为 8093；这些后端端口不再直接向局域网发布。原 Nacos 控制台仍使用 18088，数据库仍保留原有三个数据卷。
+
+更新前已备份配置、源代码、三个数据库完整 SQL、原镜像标识及业务表快照，备份位于 Ubuntu 的 `/home/weifuwu/week09-backups/original-before-update-20261116/`。该私有备份包含数据库资料，不上传 GitHub。
+
+更新前后逐字节比较原业务表数据快照，住户 11 条、维修人员 15 条、工单 21 条均未改变；三个数据库数据卷名称也一致。认证所需的账号表是本周新增内容，不覆盖原住户资料。保留两个住户服务实例，账号存放于同一个原 user_db。
 
 ```bash
-cd /home/weifuwu/community-repair-week09-preview
-docker compose -f compose.preview.json ps
+cd /home/weifuwu/community-repair-week07
+docker compose ps
 bash scripts/auth-test.sh
 ```
 
-独立配置复现时先配置数据库及 Nacos 凭据、生成本地认证参数，设置 `BACKEND_TEST_URL=http://127.0.0.1:19091`，再运行 `docker compose -f compose.week09-verify.json up -d --build`。通过 `VERIFY_NACOS_ADDR` 指定现有 Nacos 地址。网关的健康成功后仍需等待业务实例注册完成，再执行认证脚本；若服务尚未就绪，脚本会如实失败而非忽略错误。
+本周代码本机服务测试合计 45 项通过，原 Ubuntu 部署实际 HTTP 验证 17 项通过，覆盖登录、未认证、越权、三条业务路由、伪造身份、令牌篡改/过期、后端直连和内部 Feign 协作。完整原部署校验见 [deployment-original.json](homework/week-09/evidence/deployment-original.json)。
 
-本机本轮测试合计 45 项通过：user-service 10、repair-service 24、technician-service 4、gateway-service 7。Ubuntu 本轮实际 HTTP 检查 17 项通过。运行证据和截图均不含实际密码、签名密钥或完整 JWT。
+此前的独立预览容器已停止，预览数据库卷保留作验证记录；当前 18081 端口由原部署网关提供服务。`compose.week09-verify.json` 仅保留为可选独立验证配置，不要与当前环境同时占用同一网关端口。原部署启动使用根目录 `compose.yaml`。
+
+本次终端截图和证据不包含实际密码、JWT 签名密钥或完整令牌。测试账号仍为 admin/ADMIN、resident/RESIDENT，密码只在本地环境文件中保存。

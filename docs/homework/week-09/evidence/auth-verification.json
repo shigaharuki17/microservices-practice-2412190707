@@ -1,5 +1,5 @@
 {
-  "verifiedAt": "2026-11-16T08:02:01.075472+00:00",
+  "verifiedAt": "2026-11-16T08:49:26.962886+00:00",
   "base": "http://localhost:18081",
   "checks": [
     {
@@ -93,19 +93,19 @@
       "path": "/api/residents",
       "status": 200,
       "route": "user-service",
-      "recordCount": 1
+      "recordCount": 11
     },
     {
       "path": "/api/technicians",
       "status": 200,
       "route": "technician-service",
-      "recordCount": 1
+      "recordCount": 15
     },
     {
       "path": "/api/repair-orders",
       "status": 200,
       "route": "repair-service",
-      "recordCount": 1
+      "recordCount": 21
     }
   ],
   "identity": {

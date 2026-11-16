@@ -2,12 +2,12 @@
 
 ## 第九周：网关与认证入口
 
-本周验证入口为 `http://<Ubuntu-IP>:18081/`，工作台已接入登录；本周配置将业务端口限制为回环诊断访问。
+统一入口为 `http://<Ubuntu-IP>:18081/`，工作台已接入登录；本周配置将业务端口限制为回环诊断访问。
 首次配置好原数据库/Nacos `.env` 后运行 `python3 scripts/init-auth-env.py`，再执行 `docker compose up -d --build`。
 测试账号为 `admin`（ADMIN）和 `resident`（RESIDENT），随机测试密码仅保存在本地 `.env`，数据库保存 BCrypt 哈希。
 `bash scripts/auth-test.sh` 验证登录、认证、角色、三条路由及防绕过，失败返回非零退出码。
 完整说明：[安全与路由](docs/security.md)、[本周作业和截图](docs/homework/week-09/index.md)。
-本周在独立 Ubuntu 验证环境运行，原环境尚未替换，详情见本周文档。采用本周配置后，旧周次直接访问业务端口的示例属于历史验证记录，需从网关携带 JWT 访问。旧脚本若未携带内部凭据不再适用于本周部署。
+本周配置已更新到原 Ubuntu 部署，原数据卷及业务记录已核对保留。旧周次直接访问业务端口的示例属于历史验证记录，需从网关携带 JWT 访问。旧脚本若未携带内部凭据不再适用于本周部署。
 
 测试：`./services/user-service/mvnw -f services/user-service/pom.xml test`；将 pom.xml 路径中的服务名分别换为 `technician-service`、`repair-service`、`gateway-service` 可运行对应测试。
 
@@ -24,8 +24,8 @@
 
 已在现有 `repair-service` 内加入同源网页，无需另装前端工具，也不依赖外部 CDN。
 
-- Windows 浏览器访问：<http://192.168.158.128:8093/>。
-- Ubuntu 本机访问：<http://localhost:8093/>；虚拟机 IP 变化时需替换访问地址。
+- Windows 浏览器访问：<http://192.168.158.128:18081/>。
+- Ubuntu 本机访问：<http://localhost:18081/>；虚拟机 IP 变化时需替换访问地址。
 - 支持工单搜索、状态与类型筛选、分页、详情、提交、审核通过或驳回、技能匹配派单、确认接单，以及带二次确认的单条工单删除。
 - 支持新增住户及维修人员档案，档案仍由各自服务独立保存。
 - 页面通过 `/api/portal/residents`、`/api/portal/technicians` 同源接口读取和新增档案。后端仍使用 Nacos 发现实例并发起 HTTP 请求，没有跨库访问，也未放开跨域。
@@ -39,9 +39,9 @@ sudo docker compose up -d --build
 sudo docker compose up -d --build --no-deps repair-service
 ```
 
-首次演示按“新增住户 → 新增可接单的维修人员 → 新建报修 → 查看详情 → 审核通过 → 派单 → 确认接单”操作。派单人员技能须与报修类别匹配。
+使用 admin 账号登录后，首次演示按“新增住户 → 新增可接单的维修人员 → 新建报修 → 查看详情 → 审核通过 → 派单 → 确认接单”操作。派单人员技能须与报修类别匹配。
 
-**范围：** 页面为课程演示工作台，尚未实现业务用户登录、角色授权及数据范围限制。住户档案不是登录账号，确认接单也不代表维修完工。不要用于真实多用户生产环境。Nacos 管理员登录与业务登录是不同功能。
+**范围：** 页面已接入业务账号登录和 ADMIN/RESIDENT 角色授权，尚未实现逐条工单的数据范围限制。住户档案不是登录账号，确认接单也不代表维修完工。不要用于真实多用户生产环境。Nacos 管理员登录与业务登录是不同功能。
 
 验证和截图见 [可视化页面说明](docs/ui-guide.md)。
 

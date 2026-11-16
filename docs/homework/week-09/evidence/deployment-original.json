@@ -1,0 +1,45 @@
+{
+  "deployment": "original",
+  "project": "community-repair-services",
+  "directory": "/home/weifuwu/community-repair-week07",
+  "gateway": "http://192.168.158.128:18081",
+  "nacosGroup": "PERSONAL_GROUP",
+  "verifiedAt": "2026-11-16T08:48:39.657960+00:00",
+  "backupDirectory": "/home/weifuwu/week09-backups/original-before-update-20261116",
+  "businessData": {
+    "user-db": {
+      "table": "residents",
+      "beforeCount": 11,
+      "afterCount": 11,
+      "dataUnchanged": true,
+      "beforeSha256": "b6dd2f9616bf3570f8b8a471e5ce4cf4dccc31786ae48d2047c4d08496d3914d",
+      "afterSha256": "b6dd2f9616bf3570f8b8a471e5ce4cf4dccc31786ae48d2047c4d08496d3914d"
+    },
+    "technician-db": {
+      "table": "technicians",
+      "beforeCount": 15,
+      "afterCount": 15,
+      "dataUnchanged": true,
+      "beforeSha256": "a3cf2abe46c963ed32c7ce93989798a0728707c6847f30ae495c18f2da4d3843",
+      "afterSha256": "a3cf2abe46c963ed32c7ce93989798a0728707c6847f30ae495c18f2da4d3843"
+    },
+    "repair-db": {
+      "table": "repair_orders",
+      "beforeCount": 21,
+      "afterCount": 21,
+      "dataUnchanged": true,
+      "beforeSha256": "4e6b958e23ca9d2292039ec61bc0c467a6898051f3cad62aae7cd5ae0d07b944",
+      "afterSha256": "4e6b958e23ca9d2292039ec61bc0c467a6898051f3cad62aae7cd5ae0d07b944"
+    }
+  },
+  "databaseVolumesUnchanged": true,
+  "databaseVolumes": [
+    "community-repair-services_user-data",
+    "community-repair-services_technician-data",
+    "community-repair-services_repair-data"
+  ],
+  "loginAccountCount": 2,
+  "bcryptCost12AccountCount": 2,
+  "httpChecksPassed": 17,
+  "previewContainersStopped": true
+}
